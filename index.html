@@ -70,7 +70,7 @@ async function fetchNews(){
   try{
 
     const url = `https://newsapi.org/v2/top-headlines?q=artificial intelligence&language=en&pageSize=10&apiKey=${API_KEY}`;
-    const res = await fetch(url);
+    const res = await fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(url));
     const data = await res.json();
 
     if(data.status !== "ok") throw "API Error";
