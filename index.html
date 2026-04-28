@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEURALPULSE PRO</title>
+<title>NEURALPULSE AI NEWS</title>
 
 <style>
 body {
@@ -13,94 +13,77 @@ body {
   padding:20px;
 }
 h1 {color:#4f7aff}
-.news {background:#111827;margin:10px 0;padding:15px;border-radius:10px}
+button {
+  padding:10px 15px;
+  border:none;
+  border-radius:8px;
+  background:#4f7aff;
+  color:#fff;
+  cursor:pointer;
+}
+.news {
+  background:#111827;
+  margin:10px 0;
+  padding:15px;
+  border-radius:10px;
+}
+a {color:#4f7aff}
 </style>
 </head>
 
 <body>
 
-<h1>🔥 NEURALPULSE PRO — أخبار AI</h1>
+<h1>🧠 NEURALPULSE — أخبار الذكاء الاصطناعي</h1>
 <button onclick="fetchNews()">تحديث</button>
 
-<div id="news"></div>
+<div id="news">جاري تحميل الأخبار...</div>
 
 <script>
 
-// =====================
-// CONFIG
-// =====================
+// 🔑 ضع مفتاحك
 const API_KEY = "e1a3805fbe9e9f5915f8a8eafb7c8d9b";
 
-// =====================
-// TRANSLATION CACHE
-// =====================
-const cache = new Map();
+// 🔥 Proxy لحل CORS
+const PROXY = "https://api.allorigins.win/raw?url=";
 
-async function translate(text){
-  if(!text) return "";
-  if(cache.has(text)) return cache.get(text);
-
-  try{
-    const res = await fetch("https://libretranslate.de/translate",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
-        q:text,
-        source:"en",
-        target:"ar"
-      })
-    });
-
-    const data = await res.json();
-    cache.set(text,data.translatedText);
-    return data.translatedText;
-
-  }catch{
-    return text;
-  }
-}
-
-// =====================
-// FETCH NEWS
 // =====================
 async function fetchNews(){
 
-  document.getElementById("news").innerHTML = "جاري التحميل...";
+  document.getElementById("news").innerHTML = "جاري تحميل الأخبار...";
 
   try{
 
     const url = `https://newsapi.org/v2/top-headlines?q=artificial intelligence&language=en&pageSize=10&apiKey=${API_KEY}`;
-    const res = await fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(url));
+
+    const res = await fetch(PROXY + encodeURIComponent(url));
     const data = await res.json();
 
-    if(data.status !== "ok") throw "API Error";
+    if(data.status !== "ok"){
+      throw new Error(data.message);
+    }
 
     let html = "";
 
-    for(const article of data.articles){
-
-      const title = await translate(article.title);
-      const desc  = await translate(article.description);
+    data.articles.forEach(article => {
 
       html += `
         <div class="news">
-          <h3>${title}</h3>
-          <p>${desc}</p>
-          <a href="${article.url}" target="_blank">قراءة الخبر</a>
+          <h3>${article.title}</h3>
+          <p>${article.description || ""}</p>
+          <a href="${article.url}" target="_blank">📖 قراءة الخبر</a>
         </div>
       `;
-    }
+    });
 
     document.getElementById("news").innerHTML = html;
 
   }catch(e){
-    document.getElementById("news").innerHTML = "⚠️ خطأ في جلب الأخبار";
+    document.getElementById("news").innerHTML =
+      "⚠️ تعذر جلب الأخبار — تحقق من المفتاح أو الإنترنت";
   }
 }
 
-// =====================
-// START
-// =====================
+// تشغيل تلقائي
 fetchNews();
 
 </script>
