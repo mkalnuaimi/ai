@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,84 +8,87 @@
 <style>
 body {
   font-family: Arial;
-  background:#0b0f1a;
-  color:#fff;
-  padding:20px;
+  background: #0f172a;
+  color: white;
+  text-align: center;
 }
-h1 {color:#4f7aff}
-button {
-  padding:10px 15px;
-  border:none;
-  border-radius:8px;
-  background:#4f7aff;
-  color:#fff;
-  cursor:pointer;
+h1 { margin: 20px; }
+#search {
+  padding: 10px;
+  width: 60%;
+  margin-bottom: 20px;
 }
-.news {
-  background:#111827;
-  margin:10px 0;
-  padding:15px;
-  border-radius:10px;
+#news {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px,1fr));
+  gap: 20px;
+  padding: 20px;
 }
-a {color:#4f7aff}
+.card {
+  background: #1e293b;
+  padding: 15px;
+  border-radius: 10px;
+}
+.card img {
+  width: 100%;
+  border-radius: 10px;
+}
+.card a {
+  color: cyan;
+}
 </style>
 </head>
 
 <body>
 
-<h1>🧠 NEURALPULSE — أخبار الذكاء الاصطناعي</h1>
-<button onclick="fetchNews()">تحديث</button>
+<h1>🧠 NEURALPULSE AI NEWS</h1>
+<input type="text" id="search" placeholder="ابحث عن خبر...">
 
-<div id="news">جاري تحميل الأخبار...</div>
+<div id="news"></div>
 
 <script>
-
-// 🔑 ضع مفتاحك
 const API_KEY = "e1a3805fbe9e9f5915f8a8eafb7c8d9b";
+let articles = [];
 
-// 🔥 Proxy لحل CORS
-const PROXY = "https://api.allorigins.win/raw?url=";
-
-// =====================
-async function fetchNews(){
-
-  document.getElementById("news").innerHTML = "جاري تحميل الأخبار...";
-
-  try{
-
-    const url = `https://newsapi.org/v2/top-headlines?q=artificial intelligence&language=en&pageSize=10&apiKey=${API_KEY}`;
-
-    const res = await fetch(PROXY + encodeURIComponent(url));
+async function getNews() {
+  try {
+    const url = `https://gnews.io/api/v4/search?q=artificial intelligence OR AI OR ChatGPT&lang=en&max=10&apikey=${API_KEY}`;
+    
+    const res = await fetch(url);
     const data = await res.json();
 
-    if(data.status !== "ok"){
-      throw new Error(data.message);
-    }
+    articles = data.articles;
+    showNews(articles);
 
-    let html = "";
-
-    data.articles.forEach(article => {
-
-      html += `
-        <div class="news">
-          <h3>${article.title}</h3>
-          <p>${article.description || ""}</p>
-          <a href="${article.url}" target="_blank">📖 قراءة الخبر</a>
-        </div>
-      `;
-    });
-
-    document.getElementById("news").innerHTML = html;
-
-  }catch(e){
-    document.getElementById("news").innerHTML =
-      "⚠️ تعذر جلب الأخبار — تحقق من المفتاح أو الإنترنت";
+  } catch (err) {
+    document.getElementById("news").innerHTML = "⚠️ خطأ في جلب الأخبار";
   }
 }
 
-// تشغيل تلقائي
-fetchNews();
+function showNews(list) {
+  const container = document.getElementById("news");
+  container.innerHTML = "";
 
+  list.forEach(n => {
+    container.innerHTML += `
+      <div class="card">
+        <img src="${n.image || ''}">
+        <h3>${n.title}</h3>
+        <p>${n.description || ''}</p>
+        <small>${n.source.name}</small><br>
+        <a href="${n.url}" target="_blank">قراءة المزيد</a>
+      </div>
+    `;
+  });
+}
+
+document.getElementById("search").addEventListener("input", e => {
+  const val = e.target.value.toLowerCase();
+  const filtered = articles.filter(a => a.title.toLowerCase().includes(val));
+  showNews(filtered);
+});
+
+getNews();
 </script>
 
 </body>
