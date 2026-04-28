@@ -3,855 +3,107 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEURALPULSE — منصة أخبار الذكاء الاصطناعي</title>
-<meta name="description" content="منصة أخبار الذكاء الاصطناعي العالمية - أحدث الأخبار الحقيقية في عالم AI">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>NEURALPULSE PRO</title>
+
 <style>
-  :root {
-    --bg: #07090f; --bg2: #0d1117; --bg3: #111827;
-    --surface: #161d2e; --surface2: #1a2235;
-    --border: rgba(99,140,255,0.15); --border2: rgba(99,140,255,0.08);
-    --accent: #4f7aff; --accent2: #7c3aed; --accent3: #06b6d4;
-    --glow: rgba(79,122,255,0.2);
-    --text: #e8edf5; --text2: #9aaabf; --text3: #5d6e85;
-    --green: #10b981; --orange: #f59e0b; --red: #ef4444; --pink: #ec4899;
-    --font: 'Space Grotesk', sans-serif;
-    --font-display: 'Syne', sans-serif;
-    --font-mono: 'IBM Plex Mono', monospace;
-  }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  html { scroll-behavior: smooth; }
-  body { font-family:var(--font); background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden; }
-
-  .noise { position:fixed; inset:0; pointer-events:none; z-index:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E"); background-size:200px; opacity:0.4; }
-  .grid-bg { position:fixed; inset:0; pointer-events:none; z-index:0; background-image:linear-gradient(var(--border2) 1px,transparent 1px),linear-gradient(90deg,var(--border2) 1px,transparent 1px); background-size:40px 40px; mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,black 30%,transparent 80%); }
-  .orb { position:fixed; border-radius:50%; pointer-events:none; z-index:0; filter:blur(80px); animation:drift 12s ease-in-out infinite; }
-  .orb1 { width:500px; height:500px; background:radial-gradient(circle,rgba(79,122,255,0.12) 0%,transparent 70%); top:-150px; left:-100px; }
-  .orb2 { width:400px; height:400px; background:radial-gradient(circle,rgba(124,58,237,0.1) 0%,transparent 70%); top:300px; right:-80px; animation-delay:-6s; }
-  .orb3 { width:350px; height:350px; background:radial-gradient(circle,rgba(6,182,212,0.08) 0%,transparent 70%); bottom:150px; left:35%; animation-delay:-3s; }
-  @keyframes drift { 0%,100%{transform:translate(0,0)} 33%{transform:translate(30px,-30px)} 66%{transform:translate(-20px,20px)} }
-
-  /* NAV */
-  nav { position:sticky; top:0; z-index:100; background:rgba(7,9,15,0.88); backdrop-filter:blur(24px) saturate(1.8); border-bottom:1px solid var(--border2); padding:0 28px; height:64px; display:flex; align-items:center; gap:20px; }
-  .nav-logo { font-family:var(--font-display); font-size:22px; font-weight:800; background:linear-gradient(135deg,#4f7aff,#7c3aed,#06b6d4); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; letter-spacing:-0.5px; flex-shrink:0; display:flex; align-items:center; gap:10px; text-decoration:none; }
-  .logo-dot { width:9px; height:9px; border-radius:50%; background:var(--accent); box-shadow:0 0 14px var(--accent); animation:pulse-dot 2s ease-in-out infinite; display:inline-block; flex-shrink:0; }
-  @keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.7)} }
-  .nav-links { display:flex; gap:2px; flex:1; overflow-x:auto; scrollbar-width:none; }
-  .nav-links::-webkit-scrollbar { display:none; }
-  .nav-link { font-size:13px; font-weight:500; color:var(--text2); cursor:pointer; padding:7px 14px; border-radius:8px; transition:all 0.2s; white-space:nowrap; border:none; background:none; font-family:var(--font); }
-  .nav-link:hover { color:var(--text); background:var(--surface); }
-  .nav-link.active { color:var(--accent); background:rgba(79,122,255,0.1); border:1px solid rgba(79,122,255,0.2); }
-  .nav-actions { display:flex; gap:8px; align-items:center; flex-shrink:0; }
-  .search-wrap { display:flex; align-items:center; gap:8px; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:7px 14px; width:200px; transition:all 0.3s; }
-  .search-wrap:focus-within { border-color:var(--accent); width:260px; box-shadow:0 0 0 3px var(--glow); }
-  .search-wrap input { background:none; border:none; outline:none; color:var(--text); font-size:13px; font-family:var(--font); width:100%; }
-  .search-wrap input::placeholder { color:var(--text3); }
-  .icon-btn { width:36px; height:36px; border-radius:9px; background:var(--surface); border:1px solid var(--border); color:var(--text2); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s; font-size:16px; }
-  .icon-btn:hover { color:var(--text); border-color:var(--accent); background:rgba(79,122,255,0.1); }
-  .icon-btn.active { color:var(--accent); border-color:var(--accent); background:rgba(79,122,255,0.15); }
-
-  /* TICKER */
-  .ticker-bar { background:linear-gradient(90deg,var(--accent2),var(--accent),var(--accent3)); padding:7px 0; overflow:hidden; }
-  .ticker-inner { display:flex; gap:60px; animation:ticker-move 40s linear infinite; white-space:nowrap; width:max-content; }
-  .ticker-bar:hover .ticker-inner { animation-play-state:paused; }
-  .ticker-item { font-size:12px; font-weight:600; color:white; display:flex; align-items:center; gap:10px; }
-  .ticker-sep { color:rgba(255,255,255,0.35); }
-  .ticker-lbl { background:rgba(0,0,0,0.25); border-radius:4px; padding:2px 8px; font-size:10px; letter-spacing:1px; }
-  @keyframes ticker-move { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
-
-  /* LOADING */
-  .loading-screen { position:fixed; inset:0; z-index:500; background:var(--bg); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; }
-  .loading-logo { font-family:var(--font-display); font-size:32px; font-weight:800; background:linear-gradient(135deg,#4f7aff,#7c3aed,#06b6d4); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-  .loading-bar { width:240px; height:3px; background:var(--border2); border-radius:2px; overflow:hidden; }
-  .loading-fill { height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2)); border-radius:2px; animation:loading-anim 2s ease-in-out; }
-  @keyframes loading-anim { 0%{width:0} 100%{width:100%} }
-  .loading-text { font-size:13px; color:var(--text3); font-family:var(--font-mono); }
-
-  /* ERROR BANNER */
-  .error-banner { background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); border-radius:10px; padding:12px 16px; margin-bottom:16px; font-size:13px; color:#fca5a5; display:none; }
-
-  /* LAYOUT */
-  .page-wrap { display:grid; grid-template-columns:230px 1fr 290px; min-height:calc(100vh - 110px); position:relative; z-index:1; max-width:1440px; margin:0 auto; padding:0 20px; }
-
-  /* SIDEBAR LEFT */
-  .sidebar-left { padding:24px 18px 24px 0; border-right:1px solid var(--border2); position:sticky; top:64px; height:calc(100vh - 110px); overflow-y:auto; scrollbar-width:thin; scrollbar-color:var(--border) transparent; }
-  .sidebar-section { margin-bottom:28px; }
-  .sidebar-label { font-size:10px; font-weight:700; letter-spacing:2px; color:var(--text3); text-transform:uppercase; margin-bottom:10px; padding:0 10px; display:flex; align-items:center; gap:6px; }
-  .sidebar-label::before { content:''; width:16px; height:1px; background:var(--border); }
-  .cat-btn { display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:10px; cursor:pointer; transition:all 0.2s; width:100%; text-align:right; border:none; background:none; color:var(--text2); font-size:13px; font-family:var(--font); margin-bottom:2px; }
-  .cat-btn:hover { background:var(--surface); color:var(--text); }
-  .cat-btn.active { background:rgba(79,122,255,0.1); color:var(--accent); border:1px solid rgba(79,122,255,0.15); }
-  .cat-icon { width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:15px; flex-shrink:0; }
-  .cat-count { margin-right:auto; font-size:11px; background:var(--surface2); color:var(--text3); padding:2px 8px; border-radius:20px; font-family:var(--font-mono); }
-  .trend-tags { display:flex; flex-wrap:wrap; gap:6px; padding:0 2px; }
-  .trend-tag { display:inline-flex; align-items:center; padding:5px 11px; border-radius:20px; background:var(--surface); border:1px solid var(--border2); font-size:11px; color:var(--text2); cursor:pointer; transition:all 0.2s; font-weight:500; }
-  .trend-tag:hover { border-color:var(--accent); color:var(--accent); }
-
-  /* MAIN */
-  .main-content { padding:24px 22px; }
-  .status-bar { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; padding:12px 16px; background:var(--surface); border:1px solid var(--border2); border-radius:12px; gap:12px; }
-  .status-left { display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
-  .live-indicator { display:flex; align-items:center; gap:7px; font-size:11px; font-weight:700; color:var(--green); letter-spacing:1px; text-transform:uppercase; }
-  .live-dot { width:7px; height:7px; border-radius:50%; background:var(--green); animation:pulse-green 1.5s ease-in-out infinite; }
-  @keyframes pulse-green { 0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(16,185,129,0.5)} 50%{opacity:0.8;box-shadow:0 0 0 7px rgba(16,185,129,0)} }
-  .clock { font-family:var(--font-mono); font-size:12px; color:var(--text3); }
-  .news-counter { font-size:12px; color:var(--text2); }
-  .news-counter strong { color:var(--accent); font-weight:600; }
-  .refresh-section { display:flex; align-items:center; gap:12px; }
-  .timer-wrap { text-align:center; }
-  .timer-label { font-size:10px; color:var(--text3); margin-bottom:4px; }
-  .timer-bar { width:80px; height:2px; background:var(--border2); border-radius:1px; overflow:hidden; }
-  .timer-fill { height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2)); border-radius:1px; transition:width 1s linear; }
-  .btn-refresh { font-size:12px; padding:7px 14px; border-radius:8px; background:rgba(79,122,255,0.1); border:1px solid rgba(79,122,255,0.3); color:var(--accent); cursor:pointer; font-family:var(--font); font-weight:500; transition:all 0.2s; display:flex; align-items:center; gap:7px; }
-  .btn-refresh:hover { background:rgba(79,122,255,0.2); }
-  .btn-refresh:disabled { opacity:0.5; cursor:default; }
-  .spin-icon { display:inline-block; }
-  .spinning { animation:spin 0.8s linear infinite; }
-  @keyframes spin { to{transform:rotate(360deg)} }
-
-  .section-head { display:flex; align-items:center; gap:10px; margin-bottom:16px; }
-  .section-head-title { font-size:11px; font-weight:700; color:var(--text3); letter-spacing:2.5px; text-transform:uppercase; white-space:nowrap; }
-  .section-head::after { content:''; flex:1; height:1px; background:var(--border2); }
-
-  /* FEATURED */
-  .featured-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:32px; }
-  .feat-card { background:var(--surface); border:1px solid var(--border2); border-radius:14px; overflow:hidden; cursor:pointer; transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1); position:relative; }
-  .feat-card:hover { border-color:var(--accent); transform:translateY(-3px); box-shadow:0 12px 40px rgba(79,122,255,0.15); }
-  .feat-card.hero { grid-column:1/-1; }
-  .feat-visual { height:150px; position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center; }
-  .feat-card.hero .feat-visual { height:220px; }
-  .feat-img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0.5; }
-  .feat-gradient { position:absolute; inset:0; background:linear-gradient(to top,rgba(7,9,15,0.95) 0%,rgba(7,9,15,0.3) 100%); }
-  .feat-emoji { position:absolute; font-size:64px; opacity:0.18; transition:transform 0.4s; }
-  .feat-card.hero .feat-emoji { font-size:90px; }
-  .feat-card:hover .feat-emoji { transform:scale(1.1) rotate(-5deg); }
-  .feat-badge { position:absolute; top:12px; right:12px; font-size:10px; font-weight:700; letter-spacing:0.5px; padding:4px 10px; border-radius:6px; text-transform:uppercase; backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.1); }
-  .bk-btn { position:absolute; bottom:12px; left:12px; width:30px; height:30px; border-radius:7px; background:rgba(7,9,15,0.65); backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.1); color:var(--text2); cursor:pointer; font-size:13px; display:flex; align-items:center; justify-content:center; transition:all 0.2s; z-index:2; }
-  .bk-btn:hover,.bk-btn.saved { color:var(--orange); border-color:var(--orange); }
-  .feat-body { padding:16px; }
-  .feat-title { font-size:15px; font-weight:600; line-height:1.45; color:var(--text); margin-bottom:10px; }
-  .feat-card.hero .feat-title { font-size:20px; }
-  .feat-summary { font-size:12px; color:var(--text2); line-height:1.6; margin-bottom:10px; }
-  .feat-meta { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
-  .feat-src { font-size:11px; color:var(--accent); font-weight:600; }
-  .feat-time { font-size:11px; color:var(--text3); }
-
-  /* TABS */
-  .tabs-wrap { display:flex; gap:4px; margin-bottom:16px; background:var(--surface); border-radius:12px; padding:5px; border:1px solid var(--border2); }
-  .tab-btn { flex:1; padding:8px; border-radius:8px; font-size:13px; font-weight:500; text-align:center; cursor:pointer; color:var(--text2); transition:all 0.2s; border:none; background:none; font-family:var(--font); }
-  .tab-btn.active { background:rgba(79,122,255,0.15); color:var(--accent); }
-  .tab-btn:hover:not(.active) { color:var(--text); }
-
-  /* FILTER */
-  .filter-row { display:flex; gap:6px; margin-bottom:18px; flex-wrap:wrap; }
-  .filter-btn { font-size:11px; padding:5px 13px; border-radius:20px; background:var(--surface); border:1px solid var(--border2); color:var(--text2); cursor:pointer; font-family:var(--font); font-weight:500; transition:all 0.2s; }
-  .filter-btn:hover { border-color:var(--border); color:var(--text); }
-  .filter-btn.active { background:rgba(79,122,255,0.12); border-color:var(--accent); color:var(--accent); }
-
-  /* NEWS LIST */
-  .news-list { display:flex; flex-direction:column; gap:10px; margin-bottom:32px; }
-  .news-item { display:flex; gap:14px; background:var(--surface); border:1px solid var(--border2); border-radius:12px; padding:14px 16px; cursor:pointer; transition:all 0.25s; align-items:flex-start; }
-  .news-item:hover { border-color:rgba(79,122,255,0.3); transform:translateX(4px); box-shadow:-4px 0 20px rgba(79,122,255,0.08); }
-  .news-num { font-family:var(--font-mono); font-size:12px; color:var(--text3); min-width:24px; padding-top:2px; flex-shrink:0; }
-  .news-body { flex:1; min-width:0; }
-  .news-title { font-size:14px; font-weight:500; color:var(--text); margin-bottom:7px; line-height:1.45; }
-  .news-meta-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
-  .news-tag { font-size:10px; padding:3px 8px; border-radius:5px; font-weight:600; text-transform:uppercase; }
-  .news-source { font-size:11px; color:var(--text3); font-weight:500; }
-  .news-time { font-size:11px; color:var(--text3); }
-  .news-actions { display:flex; flex-direction:column; align-items:flex-end; gap:8px; flex-shrink:0; }
-  .news-views { font-family:var(--font-mono); font-size:11px; color:var(--text3); }
-
-  /* SIDEBAR RIGHT */
-  .sidebar-right { padding:24px 0 24px 18px; border-right:1px solid var(--border2); position:sticky; top:64px; height:calc(100vh - 110px); overflow-y:auto; scrollbar-width:thin; }
-  .ai-daily { background:linear-gradient(135deg,rgba(79,122,255,0.08),rgba(124,58,237,0.08)); border:1px solid rgba(79,122,255,0.2); border-radius:12px; padding:16px; margin-bottom:18px; }
-  .ai-daily-head { display:flex; align-items:center; gap:8px; margin-bottom:10px; }
-  .ai-label { font-size:11px; font-weight:700; color:var(--accent); letter-spacing:1px; text-transform:uppercase; }
-  .ai-text { font-size:12px; color:var(--text2); line-height:1.7; }
-  .widget { background:var(--surface); border:1px solid var(--border2); border-radius:12px; padding:14px 16px; margin-bottom:16px; }
-  .widget-head { font-size:10px; font-weight:700; color:var(--text3); letter-spacing:2px; text-transform:uppercase; margin-bottom:14px; }
-  .trend-item { display:flex; gap:12px; align-items:flex-start; padding:10px 0; border-bottom:1px solid var(--border2); cursor:pointer; transition:all 0.15s; }
-  .trend-item:last-child { border-bottom:none; padding-bottom:0; }
-  .trend-item:hover .trend-item-title { color:var(--accent); }
-  .trend-rank { font-family:var(--font-mono); font-size:18px; font-weight:500; color:var(--text3); min-width:26px; line-height:1.1; }
-  .trend-rank.hot { color:var(--red); }
-  .trend-item-title { font-size:12px; color:var(--text); line-height:1.45; margin-bottom:4px; }
-  .trend-item-src { font-size:10px; color:var(--text3); }
-  .stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-  .stat-card { background:var(--bg3); border-radius:10px; padding:12px; text-align:center; }
-  .stat-val { font-size:26px; font-weight:700; font-family:var(--font-display); line-height:1; margin-bottom:4px; }
-  .stat-label { font-size:10px; color:var(--text3); font-weight:500; }
-
-  /* MODAL */
-  .modal-overlay { position:fixed; inset:0; z-index:200; background:rgba(7,9,15,0.92); backdrop-filter:blur(16px); display:none; align-items:center; justify-content:center; padding:24px; }
-  .modal-overlay.open { display:flex; }
-  .modal-box { background:var(--bg2); border:1px solid var(--border); border-radius:18px; max-width:720px; width:100%; max-height:88vh; overflow-y:auto; position:relative; animation:modalPop 0.35s cubic-bezier(0.34,1.56,0.64,1); scrollbar-width:thin; }
-  @keyframes modalPop { from{opacity:0;transform:scale(0.9) translateY(24px)} to{opacity:1;transform:scale(1) translateY(0)} }
-  .modal-close-row { position:sticky; top:0; z-index:10; display:flex; justify-content:flex-end; padding:16px 16px 0; background:var(--bg2); border-radius:18px 18px 0 0; }
-  .modal-close-btn { width:34px; height:34px; border-radius:9px; background:var(--surface); border:1px solid var(--border); color:var(--text2); cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center; transition:all 0.2s; }
-  .modal-close-btn:hover { color:var(--text); border-color:var(--accent); }
-  .modal-inner { padding:4px 28px 28px; }
-  .modal-cat-badge { display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:700; margin-bottom:14px; padding:5px 12px; border-radius:7px; text-transform:uppercase; letter-spacing:0.5px; }
-  .modal-headline { font-family:var(--font-display); font-size:24px; font-weight:700; line-height:1.3; color:var(--text); margin-bottom:14px; }
-  .modal-meta { display:flex; gap:14px; align-items:center; margin-bottom:20px; flex-wrap:wrap; }
-  .modal-src { font-size:13px; color:var(--accent); font-weight:600; }
-  .modal-date { font-size:12px; color:var(--text3); }
-  .modal-hero { width:100%; height:220px; border-radius:12px; margin-bottom:20px; object-fit:cover; border:1px solid var(--border2); background:var(--surface2); display:flex; align-items:center; justify-content:center; font-size:80px; overflow:hidden; }
-  .modal-ai-box { background:rgba(79,122,255,0.06); border:1px solid rgba(79,122,255,0.18); border-radius:10px; padding:14px 16px; margin-bottom:20px; }
-  .modal-ai-title { font-size:10px; font-weight:700; color:var(--accent); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:8px; }
-  .modal-ai-text { font-size:13px; color:var(--text2); line-height:1.7; }
-  .modal-text { font-size:14px; color:var(--text2); line-height:1.85; }
-  .modal-text p { margin-bottom:14px; }
-  .modal-link { display:inline-flex; align-items:center; gap:6px; font-size:13px; color:var(--accent); text-decoration:none; padding:8px 16px; border-radius:8px; background:rgba(79,122,255,0.1); border:1px solid rgba(79,122,255,0.2); margin-top:12px; transition:all 0.2s; }
-  .modal-link:hover { background:rgba(79,122,255,0.2); }
-  .modal-tags { display:flex; gap:7px; flex-wrap:wrap; margin-top:20px; padding-top:20px; border-top:1px solid var(--border2); }
-  .modal-tag { font-size:12px; padding:5px 12px; border-radius:20px; background:var(--surface); border:1px solid var(--border2); color:var(--text2); cursor:pointer; transition:all 0.2s; }
-  .modal-tag:hover { border-color:var(--accent); color:var(--accent); }
-
-  /* SKELETON */
-  .skeleton { background:linear-gradient(90deg,var(--surface) 25%,var(--surface2) 50%,var(--surface) 75%); background-size:200% 100%; animation:shimmer 1.5s infinite; border-radius:8px; }
-  @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
-  .skel-item { display:flex; gap:14px; background:var(--surface); border:1px solid var(--border2); border-radius:12px; padding:14px 16px; margin-bottom:10px; }
-  .skel-num { width:24px; height:14px; border-radius:4px; }
-  .skel-body { flex:1; display:flex; flex-direction:column; gap:8px; }
-  .skel-title { height:16px; border-radius:4px; width:90%; }
-  .skel-meta { height:12px; border-radius:4px; width:50%; }
-
-  /* TOAST */
-  .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); z-index:300; background:var(--surface); border:1px solid var(--accent); border-radius:12px; padding:12px 20px; min-width:240px; max-width:320px; text-align:center; animation:toastIn 0.4s cubic-bezier(0.34,1.56,0.64,1); box-shadow:0 8px 32px rgba(79,122,255,0.25); }
-  @keyframes toastIn { from{opacity:0;transform:translateX(-50%) translateY(20px)} to{opacity:1;transform:translateX(-50%) translateY(0)} }
-  .toast-title { font-size:13px; font-weight:600; color:var(--accent); margin-bottom:3px; }
-  .toast-text { font-size:12px; color:var(--text2); }
-
-  .empty-state { text-align:center; padding:60px 20px; color:var(--text3); }
-  .empty-icon { font-size:48px; margin-bottom:12px; opacity:0.5; }
-
-  @media (max-width:1100px) { .page-wrap { grid-template-columns:200px 1fr; } .sidebar-right { display:none; } }
-  @media (max-width:760px) { .page-wrap { grid-template-columns:1fr; } .sidebar-left { display:none; } nav { padding:0 16px; } .search-wrap { width:140px; } .featured-grid { grid-template-columns:1fr; } .feat-card.hero { grid-column:auto; } }
+body {
+  font-family: Arial;
+  background:#0b0f1a;
+  color:#fff;
+  padding:20px;
+}
+h1 {color:#4f7aff}
+.news {background:#111827;margin:10px 0;padding:15px;border-radius:10px}
 </style>
 </head>
+
 <body>
 
-<!-- LOADING SCREEN -->
-<div class="loading-screen" id="loadingScreen">
-  <div class="loading-logo">✦ NEURALPULSE</div>
-  <div class="loading-bar"><div class="loading-fill"></div></div>
-  <div class="loading-text">جاري جلب أحدث أخبار الذكاء الاصطناعي...</div>
-</div>
+<h1>🔥 NEURALPULSE PRO — أخبار AI</h1>
+<button onclick="fetchNews()">تحديث</button>
 
-<div class="noise"></div>
-<div class="grid-bg"></div>
-<div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div>
-
-<nav>
-  <a class="nav-logo" href="#">
-    <span class="logo-dot"></span>NEURALPULSE
-  </a>
-  <div class="nav-links" id="navLinks">
-    <button class="nav-link active" onclick="setNav(this,'all')">الكل</button>
-    <button class="nav-link" onclick="setNav(this,'software')">البرمجيات</button>
-    <button class="nav-link" onclick="setNav(this,'datacenter')">مراكز البيانات</button>
-    <button class="nav-link" onclick="setNav(this,'systems')">الأنظمة</button>
-    <button class="nav-link" onclick="setNav(this,'companies')">الشركات</button>
-    <button class="nav-link" onclick="setNav(this,'research')">الأبحاث</button>
-    <button class="nav-link" onclick="setNav(this,'robotics')">الروبوتات</button>
-  </div>
-  <div class="nav-actions">
-    <div class="search-wrap">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--text3);flex-shrink:0"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      <input type="text" placeholder="ابحث..." id="searchInput" oninput="onSearch(this.value)">
-    </div>
-    <button class="icon-btn" id="darkBtn" onclick="toggleDark()" title="تبديل الوضع">🌙</button>
-    <button class="icon-btn" onclick="viewBookmarks()" title="المحفوظات">🔖</button>
-    <button class="icon-btn" onclick="toast('🔔 الإشعارات','لا توجد إشعارات جديدة')" title="الإشعارات">🔔</button>
-  </div>
-</nav>
-
-<div class="ticker-bar">
-  <div class="ticker-inner" id="tickerEl">
-    <span class="ticker-item"><span class="ticker-lbl">مباشر</span> جاري تحميل أحدث أخبار الذكاء الاصطناعي... <span class="ticker-sep">◆</span></span>
-    <span class="ticker-item"><span class="ticker-lbl">AI</span> NEURALPULSE — منصة أخبار الذكاء الاصطناعي العالمية <span class="ticker-sep">◆</span></span>
-    <span class="ticker-item"><span class="ticker-lbl">مباشر</span> جاري تحميل أحدث أخبار الذكاء الاصطناعي... <span class="ticker-sep">◆</span></span>
-    <span class="ticker-item"><span class="ticker-lbl">AI</span> NEURALPULSE — منصة أخبار الذكاء الاصطناعي العالمية <span class="ticker-sep">◆</span></span>
-  </div>
-</div>
-
-<div class="page-wrap">
-
-  <!-- SIDEBAR LEFT -->
-  <aside class="sidebar-left">
-    <div class="sidebar-section">
-      <div class="sidebar-label">الأقسام</div>
-      <button class="cat-btn active" onclick="setCat('all',this)">
-        <span class="cat-icon" style="background:rgba(79,122,255,0.1)">📰</span>
-        جميع الأخبار <span class="cat-count" id="c-all">0</span>
-      </button>
-      <button class="cat-btn" onclick="setCat('software',this)">
-        <span class="cat-icon" style="background:rgba(6,182,212,0.1)">💻</span>
-        البرمجيات <span class="cat-count" id="c-software">0</span>
-      </button>
-      <button class="cat-btn" onclick="setCat('datacenter',this)">
-        <span class="cat-icon" style="background:rgba(124,58,237,0.1)">🏢</span>
-        مراكز البيانات <span class="cat-count" id="c-datacenter">0</span>
-      </button>
-      <button class="cat-btn" onclick="setCat('systems',this)">
-        <span class="cat-icon" style="background:rgba(245,158,11,0.1)">⚙️</span>
-        الأنظمة <span class="cat-count" id="c-systems">0</span>
-      </button>
-      <button class="cat-btn" onclick="setCat('companies',this)">
-        <span class="cat-icon" style="background:rgba(16,185,129,0.1)">🏛️</span>
-        الشركات <span class="cat-count" id="c-companies">0</span>
-      </button>
-      <button class="cat-btn" onclick="setCat('research',this)">
-        <span class="cat-icon" style="background:rgba(236,72,153,0.1)">🔬</span>
-        الأبحاث <span class="cat-count" id="c-research">0</span>
-      </button>
-      <button class="cat-btn" onclick="setCat('robotics',this)">
-        <span class="cat-icon" style="background:rgba(239,68,68,0.1)">🤖</span>
-        الروبوتات <span class="cat-count" id="c-robotics">0</span>
-      </button>
-    </div>
-    <div class="sidebar-section">
-      <div class="sidebar-label">المحفوظات</div>
-      <div id="savedLabel" style="font-size:12px;color:var(--text3);padding:0 10px">لا توجد أخبار محفوظة</div>
-    </div>
-    <div class="sidebar-section">
-      <div class="sidebar-label">كلمات رائجة</div>
-      <div class="trend-tags">
-        <span class="trend-tag" onclick="onSearch('GPT')">GPT</span>
-        <span class="trend-tag" onclick="onSearch('Gemini')">Gemini</span>
-        <span class="trend-tag" onclick="onSearch('OpenAI')">OpenAI</span>
-        <span class="trend-tag" onclick="onSearch('robot')">Robot</span>
-        <span class="trend-tag" onclick="onSearch('NVIDIA')">NVIDIA</span>
-        <span class="trend-tag" onclick="onSearch('Claude')">Claude</span>
-        <span class="trend-tag" onclick="onSearch('AGI')">AGI</span>
-        <span class="trend-tag" onclick="onSearch('LLM')">LLM</span>
-      </div>
-    </div>
-  </aside>
-
-  <!-- MAIN -->
-  <main class="main-content">
-    <div id="errorBanner" class="error-banner"></div>
-
-    <div class="status-bar">
-      <div class="status-left">
-        <div class="live-indicator"><div class="live-dot"></div>مباشر</div>
-        <div class="clock" id="clockEl">--:--:--</div>
-        <div class="news-counter">عرض <strong id="shownCount">0</strong> من <strong id="totalCount">0</strong> خبر</div>
-      </div>
-      <div class="refresh-section">
-        <div class="timer-wrap">
-          <div class="timer-label">التحديث القادم</div>
-          <div class="timer-bar"><div class="timer-fill" id="timerFill" style="width:100%"></div></div>
-        </div>
-        <button class="btn-refresh" onclick="fetchNews(true)" id="refBtn">
-          <span class="spin-icon" id="spinEl">↻</span> تحديث
-        </button>
-      </div>
-    </div>
-
-    <div class="section-head"><div class="section-head-title">⭐ الأخبار المميزة</div></div>
-    <div class="featured-grid" id="featuredGrid">
-      <div class="feat-card hero"><div class="feat-visual"><div class="skeleton" style="width:100%;height:100%"></div></div><div class="feat-body"><div class="skeleton skel-title" style="height:20px;margin-bottom:10px"></div><div class="skeleton" style="height:14px;width:60%"></div></div></div>
-      <div class="feat-card"><div class="feat-visual"><div class="skeleton" style="width:100%;height:100%"></div></div><div class="feat-body"><div class="skeleton skel-title" style="height:16px;margin-bottom:8px"></div><div class="skeleton" style="height:12px;width:50%"></div></div></div>
-      <div class="feat-card"><div class="feat-visual"><div class="skeleton" style="width:100%;height:100%"></div></div><div class="feat-body"><div class="skeleton skel-title" style="height:16px;margin-bottom:8px"></div><div class="skeleton" style="height:12px;width:50%"></div></div></div>
-    </div>
-
-    <div class="tabs-wrap">
-      <button class="tab-btn active" onclick="setTab(this,'latest')">🕒 أحدث الأخبار</button>
-      <button class="tab-btn" onclick="setTab(this,'popular')">🔥 الأكثر قراءة</button>
-      <button class="tab-btn" onclick="setTab(this,'research')">🔬 الأبحاث</button>
-    </div>
-
-    <div class="filter-row" id="filterRow"></div>
-
-    <div class="news-list" id="newsList">
-      ${[1,2,3,4,5].map(()=>`<div class="skel-item"><div class="skeleton skel-num"></div><div class="skel-body"><div class="skeleton skel-title"></div><div class="skeleton skel-meta"></div></div></div>`).join('')}
-    </div>
-  </main>
-
-  <!-- SIDEBAR RIGHT -->
-  <aside class="sidebar-right">
-    <div class="ai-daily">
-      <div class="ai-daily-head">
-        <span style="font-size:16px">✦</span>
-        <span class="ai-label">ملخص AI اليوم</span>
-      </div>
-      <div class="ai-text" id="aiSummaryText">جاري تحليل أحدث أخبار الذكاء الاصطناعي...</div>
-    </div>
-    <div class="widget">
-      <div class="widget-head">📈 الأكثر قراءة</div>
-      <div id="trendingEl"><div class="skeleton" style="height:60px;margin-bottom:8px"></div><div class="skeleton" style="height:60px;margin-bottom:8px"></div><div class="skeleton" style="height:60px"></div></div>
-    </div>
-    <div class="widget">
-      <div class="widget-head">📊 إحصائيات اليوم</div>
-      <div class="stats-grid">
-        <div class="stat-card"><div class="stat-val" style="color:var(--accent)" id="statNews">0</div><div class="stat-label">خبر اليوم</div></div>
-        <div class="stat-card"><div class="stat-val" style="color:var(--green)">6</div><div class="stat-label">مصادر</div></div>
-        <div class="stat-card"><div class="stat-val" style="color:var(--pink)" id="statSaved">0</div><div class="stat-label">محفوظ</div></div>
-        <div class="stat-card"><div class="stat-val" style="color:var(--orange)">6</div><div class="stat-label">أقسام</div></div>
-      </div>
-    </div>
-  </aside>
-</div>
-
-<!-- MODAL -->
-<div class="modal-overlay" id="modalOverlay" onclick="onOverlayClick(event)">
-  <div class="modal-box">
-    <div class="modal-close-row">
-      <button class="modal-close-btn" onclick="closeModal()">✕</button>
-    </div>
-    <div class="modal-inner" id="modalInner"></div>
-  </div>
-</div>
+<div id="news"></div>
 
 <script>
+
 // =====================
 // CONFIG
 // =====================
-const API_KEY = '68b3348bc03244fa8ef13784e342476c';
-const PROXY   = 'https://api.allorigins.win/raw?url=';
-
-// بحث عن أخبار الذكاء الاصطناعي بالإنجليزية
-const QUERIES = {
-  all:        'artificial intelligence AI',
-  software:   'AI software ChatGPT LLM language model',
-  datacenter: 'AI data center GPU computing NVIDIA',
-  systems:    'AI system machine learning deep learning',
-  companies:  'OpenAI Google DeepMind Meta Microsoft AI company',
-  research:   'AI research paper study science',
-  robotics:   'AI robot robotics automation',
-};
-
-const CATS = {
-  software:   { label:'البرمجيات',     color:'#06b6d4', bg:'rgba(6,182,212,0.12)',   emoji:'💻', kw:['software','gpt','chatgpt','llm','model','claude','gemini','copilot','api','app'] },
-  datacenter: { label:'مراكز البيانات', color:'#7c3aed', bg:'rgba(124,58,237,0.12)', emoji:'🏢', kw:['data center','datacenter','gpu','nvidia','server','cloud','aws','azure','compute','infrastructure'] },
-  systems:    { label:'الأنظمة',        color:'#f59e0b', bg:'rgba(245,158,11,0.12)', emoji:'⚙️', kw:['system','machine learning','deep learning','neural','training','framework','pytorch','tensorflow'] },
-  companies:  { label:'الشركات',        color:'#10b981', bg:'rgba(16,185,129,0.12)', emoji:'🏛️', kw:['openai','google','meta','microsoft','apple','amazon','startup','company','fund','invest','billion'] },
-  research:   { label:'الأبحاث',        color:'#ec4899', bg:'rgba(236,72,153,0.12)', emoji:'🔬', kw:['research','paper','study','scientist','lab','university','experiment','discover','academic'] },
-  robotics:   { label:'الروبوتات',      color:'#ef4444', bg:'rgba(239,68,68,0.12)',  emoji:'🤖', kw:['robot','robotic','boston dynamics','humanoid','automation','autonomous','drone','vehicle'] },
-};
-
-const BG_GRADIENTS = [
-  ['#0d0527','#080f2e'],['#071a0a','#051525'],['#160a20','#07150a'],
-  ['#1a0808','#0d1520'],['#0a1a08','#161200'],['#1a1108','#08152a'],
-  ['#08182a','#1a0820'],['#0d0d1a','#1a0d08'],
-];
-
-const EMOJIS = { software:'🧠', datacenter:'⚡', systems:'⚙️', companies:'💰', research:'🔬', robotics:'🤖', default:'📰' };
+const API_KEY = "e1a3805fbe9e9f5915f8a8eafb7c8d9b";
 
 // =====================
-// STATE
+// TRANSLATION CACHE
 // =====================
-const state = {
-  articles: [],
-  bookmarks: new Set(),
-  cat: 'all',
-  tab: 'latest',
-  search: '',
-  countdown: 60,
-  darkMode: true,
-};
+const cache = new Map();
 
-// =====================
-// AUTO-CLASSIFY
-// =====================
-function classifyArticle(article) {
-  const text = ((article.title || '') + ' ' + (article.description || '') + ' ' + (article.source?.name || '')).toLowerCase();
-  for (const [key, cat] of Object.entries(CATS)) {
-    if (cat.kw.some(k => text.includes(k))) return key;
+async function translate(text){
+  if(!text) return "";
+  if(cache.has(text)) return cache.get(text);
+
+  try{
+    const res = await fetch("https://libretranslate.de/translate",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        q:text,
+        source:"en",
+        target:"ar"
+      })
+    });
+
+    const data = await res.json();
+    cache.set(text,data.translatedText);
+    return data.translatedText;
+
+  }catch{
+    return text;
   }
-  return ['software','companies','research','systems','datacenter','robotics'][Math.floor(Math.random()*6)];
-}
-
-function timeAgo(dateStr) {
-  const diff = Math.floor((Date.now() - new Date(dateStr)) / 1000);
-  if (diff < 60) return 'منذ لحظات';
-  if (diff < 3600) return `منذ ${Math.floor(diff/60)} دقيقة`;
-  if (diff < 86400) return `منذ ${Math.floor(diff/3600)} ساعة`;
-  return `منذ ${Math.floor(diff/86400)} يوم`;
 }
 
 // =====================
 // FETCH NEWS
 // =====================
-async function fetchNews(manual = false) {
-  if (manual) {
-    document.getElementById('spinEl').classList.add('spinning');
-    document.getElementById('refBtn').disabled = true;
-  }
-  hideError();
+async function fetchNews(){
 
-  try {
-    const q = QUERIES[state.cat] || QUERIES.all;
-    const url = `https://newsapi.org/v2/everything?q=${encodeURIComponent(q)}&language=en&sortBy=publishedAt&pageSize=40&apiKey=${API_KEY}`;
-    const proxyUrl = PROXY + encodeURIComponent(url);
+  document.getElementById("news").innerHTML = "جاري التحميل...";
 
-    const res = await fetch(proxyUrl);
-    if (!res.ok) throw new Error('فشل الاتصال بالخادم');
+  try{
+
+    const url = `https://newsapi.org/v2/top-headlines?q=artificial intelligence&language=en&pageSize=10&apiKey=${API_KEY}`;
+    const res = await fetch(url);
     const data = await res.json();
 
-    if (data.status === 'error') throw new Error(data.message || 'خطأ في API');
-    if (!data.articles || data.articles.length === 0) throw new Error('لا توجد نتائج');
+    if(data.status !== "ok") throw "API Error";
 
-    // Process articles
-    state.articles = data.articles
-      .filter(a => a.title && a.title !== '[Removed]' && a.description)
-      .map((a, i) => ({
-        id: i,
-        title: a.title,
-        description: a.description || '',
-        content: a.content || a.description || '',
-        source: a.source?.name || 'Unknown',
-        url: a.url,
-        image: a.urlToImage,
-        time: timeAgo(a.publishedAt),
-        publishedAt: a.publishedAt,
-        cat: classifyArticle(a),
-        grad: BG_GRADIENTS[i % BG_GRADIENTS.length],
-        emoji: EMOJIS[classifyArticle(a)] || '📰',
-        featured: i < 3,
-        views: Math.floor(Math.random() * 50000) + 5000,
-      }));
+    let html = "";
 
-    renderAll();
-    updateTicker();
-    updateAISummary();
-    hideLoading();
-    if (manual) toast('✅ تم التحديث', `تم جلب ${state.articles.length} خبر حقيقي جديد`);
+    for(const article of data.articles){
 
-  } catch (err) {
-    console.error(err);
-    showError(`تعذّر جلب الأخبار: ${err.message} — يُعرض محتوى مؤقت`);
-    loadFallback();
-    hideLoading();
-  }
+      const title = await translate(article.title);
+      const desc  = await translate(article.description);
 
-  if (manual) {
-    document.getElementById('spinEl').classList.remove('spinning');
-    document.getElementById('refBtn').disabled = false;
-  }
-  state.countdown = 60;
-}
-
-function loadFallback() {
-  // بيانات احتياطية عند فشل API
-  state.articles = [
-    { id:0, title:'OpenAI Releases GPT-5 With Advanced Reasoning Capabilities', description:'OpenAI has officially launched GPT-5, featuring multimodal reasoning that surpasses human performance on several benchmarks.', content:'OpenAI has officially launched GPT-5, featuring multimodal reasoning that surpasses human performance on several benchmarks. The new model supports text, images, audio, and video simultaneously.', source:'OpenAI Blog', url:'#', image:null, time:'منذ 15 دقيقة', cat:'software', grad:BG_GRADIENTS[0], emoji:'🧠', featured:true, views:48200 },
-    { id:1, title:'NVIDIA Announces H300 GPU: Six Times Faster Than H100', description:'NVIDIA unveiled its H300 GPU at GTC 2025, promising six times the performance of H100 while consuming 30% less energy.', content:'NVIDIA unveiled its H300 GPU at GTC 2025, promising six times the performance of H100 while consuming 30% less energy. Cloud providers have already announced plans to adopt the new chip.', source:'NVIDIA', url:'#', image:null, time:'منذ 2 ساعة', cat:'datacenter', grad:BG_GRADIENTS[1], emoji:'⚡', featured:true, views:35600 },
-    { id:2, title:'Google DeepMind Publishes Breakthrough in Mathematical Reasoning', description:'DeepMind researchers published a paper in Nature describing an algorithm that solves complex differential equations with 99.7% accuracy.', content:'DeepMind researchers published a paper in Nature describing an algorithm that solves complex differential equations without prior training data. The breakthrough opens new possibilities in computational physics.', source:'Nature', url:'#', image:null, time:'منذ 4 ساعات', cat:'research', grad:BG_GRADIENTS[2], emoji:'🔬', featured:true, views:22800 },
-  ];
-  renderAll();
-}
-
-// =====================
-// RENDER
-// =====================
-function getFiltered() {
-  let list = [...state.articles];
-  if (state.cat !== 'all') list = list.filter(n => n.cat === state.cat);
-  if (state.search) {
-    const q = state.search.toLowerCase();
-    list = list.filter(n => n.title.toLowerCase().includes(q) || n.description.toLowerCase().includes(q) || n.source.toLowerCase().includes(q));
-  }
-  if (state.tab === 'popular') list = list.sort((a,b) => b.views - a.views);
-  if (state.tab === 'research') list = list.filter(n => n.cat === 'research');
-  return list;
-}
-
-function renderAll() {
-  renderFeatured();
-  renderNewsList();
-  renderFilters();
-  renderCounts();
-  renderTrending();
-  document.getElementById('statNews').textContent = state.articles.length;
-  document.getElementById('statSaved').textContent = state.bookmarks.size;
-}
-
-function renderFeatured() {
-  const featured = state.articles.filter(n => n.featured).slice(0, 3);
-  if (!featured.length) return;
-  document.getElementById('featuredGrid').innerHTML = featured.map((n, i) => {
-    const cat = CATS[n.cat] || CATS.software;
-    const isSaved = state.bookmarks.has(n.id);
-    return `
-      <div class="feat-card ${i===0?'hero':''}" onclick="openArticle(${n.id})">
-        <div class="feat-visual">
-          ${n.image ? `<img class="feat-img" src="${n.image}" onerror="this.style.display='none'" loading="lazy">` : ''}
-          <div class="feat-gradient"></div>
-          <div class="feat-emoji">${n.emoji}</div>
-          <div class="feat-badge" style="background:${cat.bg};color:${cat.color}">${cat.label}</div>
-          <button class="bk-btn ${isSaved?'saved':''}" onclick="event.stopPropagation();toggleBK(${n.id})">🔖</button>
+      html += `
+        <div class="news">
+          <h3>${title}</h3>
+          <p>${desc}</p>
+          <a href="${article.url}" target="_blank">قراءة الخبر</a>
         </div>
-        <div class="feat-body">
-          <div class="feat-title">${n.title}</div>
-          ${i===0 ? `<div class="feat-summary">${(n.description||'').substring(0,120)}...</div>` : ''}
-          <div class="feat-meta">
-            <span class="feat-src">${n.source}</span>
-            <span class="feat-time">${n.time}</span>
-          </div>
-        </div>
-      </div>
-    `;
-  }).join('');
-}
+      `;
+    }
 
-function renderNewsList() {
-  const list = getFiltered();
-  document.getElementById('shownCount').textContent = list.length;
-  document.getElementById('totalCount').textContent = state.articles.length;
-  const el = document.getElementById('newsList');
-  if (!list.length) {
-    el.innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div><p>لا توجد نتائج</p></div>`;
-    return;
-  }
-  el.innerHTML = list.map((n, i) => {
-    const cat = CATS[n.cat] || CATS.software;
-    const isSaved = state.bookmarks.has(n.id);
-    return `
-      <div class="news-item" onclick="openArticle(${n.id})">
-        <div class="news-num">${String(i+1).padStart(2,'0')}</div>
-        <div class="news-body">
-          <div class="news-title">${n.title}</div>
-          <div class="news-meta-row">
-            <span class="news-tag" style="background:${cat.bg};color:${cat.color}">${cat.label}</span>
-            <span class="news-source">${n.source}</span>
-            <span class="news-time">${n.time}</span>
-          </div>
-        </div>
-        <div class="news-actions">
-          <div class="news-views">${fmtViews(n.views)}</div>
-          <button class="icon-btn ${isSaved?'active':''}" style="width:28px;height:28px;font-size:12px" onclick="event.stopPropagation();toggleBK(${n.id})">🔖</button>
-        </div>
-      </div>
-    `;
-  }).join('');
-}
+    document.getElementById("news").innerHTML = html;
 
-function renderFilters() {
-  const cats = [{k:'all',l:'الكل'}, ...Object.entries(CATS).map(([k,v])=>({k,l:v.label}))];
-  document.getElementById('filterRow').innerHTML = cats.map(c =>
-    `<button class="filter-btn ${state.cat===c.k?'active':''}" onclick="setCat('${c.k}',null)">${c.l}</button>`
-  ).join('');
-}
-
-function renderCounts() {
-  document.getElementById('c-all').textContent = state.articles.length;
-  Object.keys(CATS).forEach(k => {
-    const el = document.getElementById('c-'+k);
-    if (el) el.textContent = state.articles.filter(n => n.cat === k).length;
-  });
-}
-
-function renderTrending() {
-  const top = [...state.articles].sort((a,b) => b.views - a.views).slice(0, 5);
-  document.getElementById('trendingEl').innerHTML = top.map((n, i) => `
-    <div class="trend-item" onclick="openArticle(${n.id})">
-      <div class="trend-rank ${i<2?'hot':''}">${i+1}</div>
-      <div>
-        <div class="trend-item-title">${n.title.substring(0,65)}…</div>
-        <div class="trend-item-src">${n.source} · ${n.time}</div>
-      </div>
-    </div>
-  `).join('');
-}
-
-function updateTicker() {
-  const top5 = state.articles.slice(0, 5);
-  const items = [...top5, ...top5].map(n =>
-    `<span class="ticker-item"><span class="ticker-lbl">AI</span> ${n.title.substring(0,80)} <span class="ticker-sep">◆</span></span>`
-  ).join('');
-  document.getElementById('tickerEl').innerHTML = items;
-}
-
-function updateAISummary() {
-  const total = state.articles.length;
-  const cats = {};
-  state.articles.forEach(a => { cats[a.cat] = (cats[a.cat]||0)+1; });
-  const topCat = Object.entries(cats).sort((a,b)=>b[1]-a[1])[0];
-  const topCatName = topCat ? (CATS[topCat[0]]?.label || topCat[0]) : 'غير معروف';
-  document.getElementById('aiSummaryText').textContent =
-    `تم تحليل ${total} خبر حقيقي من مصادر عالمية موثوقة. يهيمن قسم "${topCatName}" على المشهد اليوم بـ ${topCat?.[1] || 0} خبراً. تشير الأخبار إلى تسارع في تطورات الذكاء الاصطناعي على مستوى العالم.`;
-}
-
-// =====================
-// ARTICLE MODAL
-// =====================
-function openArticle(id) {
-  const n = state.articles.find(x => x.id === id);
-  if (!n) return;
-  const cat = CATS[n.cat] || CATS.software;
-  const related = state.articles.filter(x => x.cat === n.cat && x.id !== n.id).slice(0, 3);
-
-  document.getElementById('modalInner').innerHTML = `
-    <span class="modal-cat-badge" style="background:${cat.bg};color:${cat.color}">${cat.label}</span>
-    <h1 class="modal-headline">${n.title}</h1>
-    <div class="modal-meta">
-      <span class="modal-src">${n.source}</span>
-      <span class="modal-date">${n.time}</span>
-      <span style="font-size:12px;color:var(--text3)">${fmtViews(n.views)} مشاهدة</span>
-      <button onclick="toggleBK(${n.id})" style="margin-right:auto;font-size:12px;padding:5px 12px;border-radius:7px;background:${state.bookmarks.has(n.id)?'rgba(245,158,11,0.15)':'var(--surface)'};border:1px solid ${state.bookmarks.has(n.id)?'var(--orange)':'var(--border2)'};color:${state.bookmarks.has(n.id)?'var(--orange)':'var(--text2)'};cursor:pointer;font-family:var(--font)">
-        🔖 ${state.bookmarks.has(n.id)?'محفوظ':'حفظ'}
-      </button>
-    </div>
-    <div class="modal-hero">
-      ${n.image ? `<img src="${n.image}" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.innerHTML='<span style=font-size:80px>${n.emoji}</span>'">` : `<span style="font-size:80px">${n.emoji}</span>`}
-    </div>
-    <div class="modal-ai-box">
-      <div class="modal-ai-title">✦ ملخص بالذكاء الاصطناعي</div>
-      <div class="modal-ai-text">${n.description}</div>
-    </div>
-    <div class="modal-text">
-      <p>${n.content ? n.content.replace(/\[\+\d+ chars\]/,'').trim() : n.description}</p>
-    </div>
-    ${n.url && n.url !== '#' ? `<a href="${n.url}" target="_blank" class="modal-link">📖 قراءة المقال الكامل ↗</a>` : ''}
-    ${related.length ? `
-      <div style="margin-top:24px;padding-top:24px;border-top:1px solid var(--border2)">
-        <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px">أخبار مشابهة</div>
-        ${related.map(r => `
-          <div onclick="openArticle(${r.id})" style="padding:10px 12px;border-radius:10px;cursor:pointer;transition:all 0.15s;border:1px solid transparent" onmouseover="this.style.background='var(--surface)'" onmouseout="this.style.background='transparent'">
-            <div style="font-size:13px;color:var(--text);line-height:1.4;margin-bottom:4px">${r.title.substring(0,90)}…</div>
-            <div style="font-size:11px;color:var(--text3)">${r.source} · ${r.time}</div>
-          </div>
-        `).join('')}
-      </div>
-    ` : ''}
-  `;
-  document.getElementById('modalOverlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeModal() {
-  document.getElementById('modalOverlay').classList.remove('open');
-  document.body.style.overflow = '';
-}
-function onOverlayClick(e) { if (e.target===document.getElementById('modalOverlay')) closeModal(); }
-
-// =====================
-// BOOKMARKS
-// =====================
-function toggleBK(id) {
-  if (state.bookmarks.has(id)) {
-    state.bookmarks.delete(id);
-    toast('تم الحذف', 'أُزيل الخبر من المحفوظات');
-  } else {
-    state.bookmarks.add(id);
-    toast('تم الحفظ ✓', 'أضيف الخبر إلى قائمة المحفوظات');
-  }
-  document.getElementById('savedLabel').textContent = state.bookmarks.size ? `${state.bookmarks.size} خبر محفوظ` : 'لا توجد أخبار محفوظة';
-  document.getElementById('statSaved').textContent = state.bookmarks.size;
-  renderAll();
-}
-
-function viewBookmarks() {
-  if (!state.bookmarks.size) { toast('المحفوظات فارغة', 'لم تحفظ أي أخبار بعد'); return; }
-  toast(`${state.bookmarks.size} أخبار محفوظة`, 'راجع الشريط الجانبي');
-}
-
-// =====================
-// FILTERS
-// =====================
-function setCat(cat, btn) {
-  state.cat = cat;
-  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  fetchNews(false);
-}
-
-function setNav(btn, cat) {
-  document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  state.cat = cat;
-  fetchNews(false);
-}
-
-function setTab(btn, tab) {
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  state.tab = tab;
-  renderNewsList();
-}
-
-function onSearch(val) {
-  state.search = val;
-  const inp = document.getElementById('searchInput');
-  if (inp) inp.value = val;
-  renderNewsList();
-}
-
-// =====================
-// HELPERS
-// =====================
-function fmtViews(v) { return v >= 1000 ? (v/1000).toFixed(1)+'k' : v; }
-
-function hideLoading() {
-  const el = document.getElementById('loadingScreen');
-  if (el) { el.style.opacity='0'; el.style.transition='opacity 0.5s'; setTimeout(()=>el.remove(),500); }
-}
-
-function showError(msg) {
-  const el = document.getElementById('errorBanner');
-  el.textContent = '⚠️ ' + msg;
-  el.style.display = 'block';
-}
-
-function hideError() {
-  document.getElementById('errorBanner').style.display = 'none';
-}
-
-function toast(title, text) {
-  document.querySelector('.toast')?.remove();
-  const el = document.createElement('div');
-  el.className = 'toast';
-  el.innerHTML = `<div class="toast-title">${title}</div><div class="toast-text">${text}</div>`;
-  document.body.appendChild(el);
-  setTimeout(()=>{ el.style.opacity='0'; el.style.transition='opacity 0.5s'; }, 3000);
-  setTimeout(()=>el.remove(), 3600);
-}
-
-function toggleDark() {
-  state.darkMode = !state.darkMode;
-  const r = document.documentElement.style;
-  if (!state.darkMode) {
-    r.setProperty('--bg','#f4f6fb'); r.setProperty('--bg2','#eef0f7'); r.setProperty('--bg3','#e4e8f2');
-    r.setProperty('--surface','#ffffff'); r.setProperty('--surface2','#f4f6fb');
-    r.setProperty('--text','#0a1224'); r.setProperty('--text2','#3a4a6b'); r.setProperty('--text3','#8592aa');
-    r.setProperty('--border','rgba(79,122,255,0.22)'); r.setProperty('--border2','rgba(79,122,255,0.1)');
-    document.getElementById('darkBtn').textContent = '☀️';
-  } else {
-    r.setProperty('--bg','#07090f'); r.setProperty('--bg2','#0d1117'); r.setProperty('--bg3','#111827');
-    r.setProperty('--surface','#161d2e'); r.setProperty('--surface2','#1a2235');
-    r.setProperty('--text','#e8edf5'); r.setProperty('--text2','#9aaabf'); r.setProperty('--text3','#5d6e85');
-    r.setProperty('--border','rgba(99,140,255,0.15)'); r.setProperty('--border2','rgba(99,140,255,0.08)');
-    document.getElementById('darkBtn').textContent = '🌙';
+  }catch(e){
+    document.getElementById("news").innerHTML = "⚠️ خطأ في جلب الأخبار";
   }
 }
-
-// =====================
-// TIMER & CLOCK
-// =====================
-function startTimer() {
-  setInterval(() => {
-    state.countdown--;
-    document.getElementById('timerFill').style.width = (state.countdown/60*100)+'%';
-    if (state.countdown <= 0) { state.countdown = 60; fetchNews(false); }
-  }, 1000);
-}
-
-setInterval(() => {
-  document.getElementById('clockEl').textContent = new Date().toLocaleTimeString('ar-SA',{hour12:false});
-}, 1000);
-
-document.addEventListener('keydown', e => { if (e.key==='Escape') closeModal(); });
 
 // =====================
 // START
 // =====================
-fetchNews(false);
-startTimer();
+fetchNews();
+
 </script>
+
 </body>
 </html>
