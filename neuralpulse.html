@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEURALPULSE — منصة أخبار الذكاء الاصطناعي</title>
+<meta name="description" content="منصة أخبار الذكاء الاصطناعي العالمية - أحدث الأخبار والتطورات في عالم AI">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #07090f;
+    --bg2: #0d1117;
+    --bg3: #111827;
+    --surface: #161d2e;
+    --surface2: #1a2235;
+    --border: rgba(99,140,255,0.15);
+    --border2: rgba(99,140,255,0.08);
+    --accent: #4f7aff;
+    --accent2: #7c3aed;
+    --accent3: #06b6d4;
+    --glow: rgba(79,122,255,0.2);
+    --text: #e8edf5;
+    --text2: #9aaabf;
+    --text3: #5d6e85;
+    --green: #10b981;
+    --orange: #f59e0b;
+    --red: #ef4444;
+    --pink: #ec4899;
+    --font: 'Space Grotesk', sans-serif;
+    --font-display: 'Syne', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  /* BACKGROUND EFFECTS */
+  .noise {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    background-size: 200px; opacity: 0.4;
+  }
+
+  .grid-bg {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image:
+      linear-gradient(var(--border2) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border2) 1px, transparent 1px);
+    background-size: 40px 40px;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 30%, transparent 80%);
+  }
+
+  .orb {
+    position: fixed; border-radius: 50%; pointer-events: none; z-index: 0;
+    filter: blur(80px); animation: drift 12s ease-in-out infinite;
+  }
+  .orb1 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(79,122,255,0.12) 0%, transparent 70%); top: -150px; left: -100px; }
+  .orb2 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(124,58,237,0.1) 0%, transparent 70%); top: 300px; right: -80px; animation-delay: -6s; }
+  .orb3 { width: 350px; height: 350px; background: radial-gradient(circle, rgba(6,182,212,0.08) 0%, transparent 70%); bottom: 150px; left: 35%; animation-delay: -3s; }
+
+  @keyframes drift {
+    0%,100% { transform: translate(0,0) }
+    33% { transform: translate(30px,-30px) }
+    66% { transform: translate(-20px,20px) }
+  }
+
+  /* NAVIGATION */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(7,9,15,0.88);
+    backdrop-filter: blur(24px) saturate(1.8);
+    border-bottom: 1px solid var(--border2);
+    padding: 0 28px;
+    height: 64px;
+    display: flex; align-items: center; gap: 20px;
+  }
+
+  .nav-logo {
+    font-family: var(--font-display);
+    font-size: 22px; font-weight: 800;
+    background: linear-gradient(135deg, #4f7aff, #7c3aed, #06b6d4);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.5px;
+    flex-shrink: 0;
+    display: flex; align-items: center; gap: 10px;
+    text-decoration: none;
+  }
+
+  .logo-dot {
+    width: 9px; height: 9px; border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 14px var(--accent), 0 0 28px rgba(79,122,255,0.5);
+    animation: pulse-dot 2s ease-in-out infinite;
+    display: inline-block; flex-shrink: 0;
+  }
+
+  @keyframes pulse-dot {
+    0%,100% { opacity:1; transform:scale(1); box-shadow:0 0 14px var(--accent) }
+    50% { opacity:0.5; transform:scale(0.7); box-shadow:0 0 6px var(--accent) }
+  }
+
+  .nav-links {
+    display: flex; gap: 2px; flex: 1;
+    overflow-x: auto; scrollbar-width: none;
+  }
+  .nav-links::-webkit-scrollbar { display: none; }
+
+  .nav-link {
+    font-size: 13px; font-weight: 500; color: var(--text2); cursor: pointer;
+    padding: 7px 14px; border-radius: 8px;
+    transition: all 0.2s; white-space: nowrap;
+    border: none; background: none;
+    font-family: var(--font); letter-spacing: 0.2px;
+  }
+  .nav-link:hover { color: var(--text); background: var(--surface); }
+  .nav-link.active { color: var(--accent); background: rgba(79,122,255,0.1); border: 1px solid rgba(79,122,255,0.2); }
+
+  .nav-actions { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+
+  .search-wrap {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 7px 14px;
+    width: 200px; transition: all 0.3s;
+  }
+  .search-wrap:focus-within {
+    border-color: var(--accent); width: 260px;
+    box-shadow: 0 0 0 3px var(--glow);
+  }
+  .search-wrap input {
+    background: none; border: none; outline: none;
+    color: var(--text); font-size: 13px;
+    font-family: var(--font); width: 100%;
+  }
+  .search-wrap input::placeholder { color: var(--text3); }
+
+  .icon-btn {
+    width: 36px; height: 36px; border-radius: 9px;
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--text2); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s; font-size: 16px;
+  }
+  .icon-btn:hover { color: var(--text); border-color: var(--accent); background: rgba(79,122,255,0.1); }
+  .icon-btn.active { color: var(--accent); border-color: var(--accent); background: rgba(79,122,255,0.15); }
+  .icon-btn.notif-wrap { position: relative; }
+  .notif-badge {
+    position: absolute; top: -3px; right: -3px;
+    width: 9px; height: 9px; border-radius: 50%;
+    background: var(--red); border: 2px solid var(--bg);
+    display: none;
+  }
+
+  /* BREAKING TICKER */
+  .ticker-bar {
+    background: linear-gradient(90deg, var(--accent2), var(--accent), var(--accent3));
+    padding: 7px 0; overflow: hidden; position: relative;
+  }
+  .ticker-inner {
+    display: flex; gap: 60px;
+    animation: ticker-move 35s linear infinite;
+    white-space: nowrap; width: max-content;
+  }
+  .ticker-bar:hover .ticker-inner { animation-play-state: paused; }
+  .ticker-item { font-size: 12px; font-weight: 600; color: white; display: flex; align-items: center; gap: 10px; }
+  .ticker-sep { color: rgba(255,255,255,0.35); font-size: 16px; }
+  .ticker-label {
+    background: rgba(0,0,0,0.25); border-radius: 4px;
+    padding: 2px 8px; font-size: 10px; letter-spacing: 1px;
+  }
+  @keyframes ticker-move { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+
+  /* LAYOUT */
+  .page-wrap {
+    display: grid;
+    grid-template-columns: 230px 1fr 290px;
+    min-height: calc(100vh - 110px);
+    position: relative; z-index: 1;
+    max-width: 1440px; margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  /* SIDEBAR LEFT */
+  .sidebar-left {
+    padding: 24px 18px 24px 0;
+    border-right: 1px solid var(--border2);
+    position: sticky; top: 64px;
+    height: calc(100vh - 110px);
+    overflow-y: auto; scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  .sidebar-section { margin-bottom: 28px; }
+
+  .sidebar-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 2px;
+    color: var(--text3); text-transform: uppercase;
+    margin-bottom: 10px; padding: 0 10px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .sidebar-label::before {
+    content:''; width:16px; height:1px; background: var(--border);
+  }
+
+  .cat-btn {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 10px; border-radius: 10px;
+    cursor: pointer; transition: all 0.2s;
+    width: 100%; text-align: right;
+    border: none; background: none; color: var(--text2);
+    font-size: 13px; font-family: var(--font);
+    margin-bottom: 2px; font-weight: 400;
+  }
+  .cat-btn:hover { background: var(--surface); color: var(--text); }
+  .cat-btn.active { background: rgba(79,122,255,0.1); color: var(--accent); border: 1px solid rgba(79,122,255,0.15); }
+
+  .cat-icon {
+    width: 30px; height: 30px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; flex-shrink: 0;
+  }
+
+  .cat-count {
+    margin-right: auto; font-size: 11px;
+    background: var(--surface2); color: var(--text3);
+    padding: 2px 8px; border-radius: 20px; font-family: var(--font-mono);
+  }
+
+  .trend-tags { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 2px; }
+  .trend-tag {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 5px 11px; border-radius: 20px;
+    background: var(--surface); border: 1px solid var(--border2);
+    font-size: 11px; color: var(--text2); cursor: pointer;
+    transition: all 0.2s; font-weight: 500;
+  }
+  .trend-tag:hover { border-color: var(--accent); color: var(--accent); background: rgba(79,122,255,0.08); }
+
+  /* MAIN */
+  .main-content { padding: 24px 22px; }
+
+  /* STATUS BAR */
+  .status-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 24px;
+    padding: 12px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    gap: 12px;
+  }
+  .status-left { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+
+  .live-indicator {
+    display: flex; align-items: center; gap: 7px;
+    font-size: 11px; font-weight: 700; color: var(--green);
+    letter-spacing: 1px; text-transform: uppercase;
+  }
+  .live-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--green);
+    animation: pulse-green 1.5s ease-in-out infinite;
+  }
+  @keyframes pulse-green {
+    0%,100% { opacity:1; box-shadow:0 0 0 0 rgba(16,185,129,0.5) }
+    50% { opacity:0.8; box-shadow:0 0 0 7px rgba(16,185,129,0) }
+  }
+
+  .clock { font-family: var(--font-mono); font-size: 12px; color: var(--text3); }
+  .news-counter { font-size: 12px; color: var(--text2); }
+  .news-counter strong { color: var(--accent); font-weight: 600; }
+
+  .refresh-section { display: flex; align-items: center; gap: 12px; }
+  .timer-wrap { text-align: center; }
+  .timer-label { font-size: 10px; color: var(--text3); margin-bottom: 4px; }
+  .timer-bar { width: 80px; height: 2px; background: var(--border2); border-radius: 1px; overflow: hidden; }
+  .timer-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 1px; transition: width 1s linear; }
+
+  .btn-refresh {
+    font-size: 12px; padding: 7px 14px; border-radius: 8px;
+    background: rgba(79,122,255,0.1); border: 1px solid rgba(79,122,255,0.3);
+    color: var(--accent); cursor: pointer; font-family: var(--font); font-weight: 500;
+    transition: all 0.2s; display: flex; align-items: center; gap: 7px;
+  }
+  .btn-refresh:hover { background: rgba(79,122,255,0.2); }
+  .btn-refresh:disabled { opacity: 0.5; cursor: default; }
+  .spin-icon { display: inline-block; transition: transform 0.3s; }
+  .spinning { animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* SECTION TITLES */
+  .section-head {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 16px;
+  }
+  .section-head-title {
+    font-size: 11px; font-weight: 700; color: var(--text3);
+    letter-spacing: 2.5px; text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .section-head::after { content:''; flex:1; height:1px; background: var(--border2); }
+
+  /* FEATURED GRID */
+  .featured-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 32px;
+  }
+
+  .feat-card {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 14px;
+    overflow: hidden; cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    position: relative;
+  }
+  .feat-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(79,122,255,0.15);
+  }
+  .feat-card.hero { grid-column: 1 / -1; }
+
+  .feat-visual {
+    height: 150px; position: relative; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .feat-card.hero .feat-visual { height: 220px; }
+
+  .feat-gradient {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, var(--g1), var(--g2));
+  }
+  .feat-emoji {
+    position: absolute; font-size: 64px; opacity: 0.18;
+    transition: transform 0.4s; user-select: none;
+  }
+  .feat-card.hero .feat-emoji { font-size: 90px; }
+  .feat-card:hover .feat-emoji { transform: scale(1.1) rotate(-5deg); }
+
+  .feat-badge {
+    position: absolute; top: 12px; right: 12px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
+    padding: 4px 10px; border-radius: 6px; text-transform: uppercase;
+    backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .bk-btn {
+    position: absolute; bottom: 12px; left: 12px;
+    width: 30px; height: 30px; border-radius: 7px;
+    background: rgba(7,9,15,0.65); backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text2); cursor: pointer; font-size: 13px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s; z-index: 2;
+  }
+  .bk-btn:hover { color: var(--orange); border-color: var(--orange); }
+  .bk-btn.saved { color: var(--orange); border-color: var(--orange); background: rgba(245,158,11,0.15); }
+
+  .feat-body { padding: 16px; }
+  .feat-title {
+    font-size: 15px; font-weight: 600; line-height: 1.45;
+    color: var(--text); margin-bottom: 10px;
+  }
+  .feat-card.hero .feat-title { font-size: 20px; }
+  .feat-summary { font-size: 12px; color: var(--text2); line-height: 1.6; margin-bottom: 10px; }
+  .feat-meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .feat-src { font-size: 11px; color: var(--accent); font-weight: 600; }
+  .feat-time { font-size: 11px; color: var(--text3); }
+  .feat-views { font-size: 11px; color: var(--text3); margin-right: auto; }
+
+  /* TABS */
+  .tabs-wrap {
+    display: flex; gap: 4px; margin-bottom: 16px;
+    background: var(--surface); border-radius: 12px; padding: 5px;
+    border: 1px solid var(--border2);
+  }
+  .tab-btn {
+    flex: 1; padding: 8px; border-radius: 8px;
+    font-size: 13px; font-weight: 500; text-align: center;
+    cursor: pointer; color: var(--text2);
+    transition: all 0.2s; border: none; background: none;
+    font-family: var(--font);
+  }
+  .tab-btn.active { background: rgba(79,122,255,0.15); color: var(--accent); }
+  .tab-btn:hover:not(.active) { color: var(--text); background: rgba(255,255,255,0.04); }
+
+  /* FILTER ROW */
+  .filter-row { display: flex; gap: 6px; margin-bottom: 18px; flex-wrap: wrap; }
+  .filter-btn {
+    font-size: 11px; padding: 5px 13px; border-radius: 20px;
+    background: var(--surface); border: 1px solid var(--border2);
+    color: var(--text2); cursor: pointer; font-family: var(--font); font-weight: 500;
+    transition: all 0.2s;
+  }
+  .filter-btn:hover { border-color: var(--border); color: var(--text); }
+  .filter-btn.active { background: rgba(79,122,255,0.12); border-color: var(--accent); color: var(--accent); }
+
+  /* NEWS LIST */
+  .news-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 32px; }
+
+  .news-item {
+    display: flex; gap: 14px;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all 0.25s;
+    align-items: flex-start;
+  }
+  .news-item:hover {
+    border-color: rgba(79,122,255,0.3);
+    transform: translateX(4px);
+    box-shadow: -4px 0 20px rgba(79,122,255,0.08);
+  }
+
+  .news-num {
+    font-family: var(--font-mono); font-size: 12px;
+    color: var(--text3); min-width: 24px; padding-top: 2px; flex-shrink: 0;
+  }
+  .news-body { flex: 1; min-width: 0; }
+  .news-title { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 7px; line-height: 1.45; }
+  .news-meta-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .news-tag {
+    font-size: 10px; padding: 3px 8px; border-radius: 5px;
+    font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;
+  }
+  .news-source { font-size: 11px; color: var(--text3); font-weight: 500; }
+  .news-time { font-size: 11px; color: var(--text3); }
+
+  .news-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex-shrink: 0; }
+  .news-views { font-family: var(--font-mono); font-size: 11px; color: var(--text3); }
+  .news-views span { color: var(--orange); font-weight: 500; }
+
+  /* SIDEBAR RIGHT */
+  .sidebar-right {
+    padding: 24px 0 24px 18px;
+    border-right: 1px solid var(--border2);
+    position: sticky; top: 64px;
+    height: calc(100vh - 110px);
+    overflow-y: auto; scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  /* AI SUMMARY */
+  .ai-daily {
+    background: linear-gradient(135deg, rgba(79,122,255,0.08), rgba(124,58,237,0.08));
+    border: 1px solid rgba(79,122,255,0.2);
+    border-radius: 12px; padding: 16px; margin-bottom: 18px;
+    position: relative; overflow: hidden;
+  }
+  .ai-daily::before {
+    content: '✦';
+    position: absolute; top: -10px; right: -5px;
+    font-size: 60px; opacity: 0.04;
+  }
+  .ai-daily-head {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
+  }
+  .ai-spark { font-size: 16px; }
+  .ai-label { font-size: 11px; font-weight: 700; color: var(--accent); letter-spacing: 1px; text-transform: uppercase; }
+  .ai-date { font-size: 10px; color: var(--text3); margin-right: auto; font-family: var(--font-mono); }
+  .ai-text { font-size: 12px; color: var(--text2); line-height: 1.7; }
+
+  /* WIDGET */
+  .widget {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+  }
+  .widget-head {
+    font-size: 10px; font-weight: 700; color: var(--text3);
+    letter-spacing: 2px; text-transform: uppercase;
+    margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
+  }
+
+  /* TRENDING */
+  .trend-item {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 10px 0; border-bottom: 1px solid var(--border2);
+    cursor: pointer; transition: all 0.15s;
+  }
+  .trend-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .trend-item:hover .trend-item-title { color: var(--accent); }
+  .trend-rank {
+    font-family: var(--font-mono); font-size: 18px; font-weight: 500;
+    color: var(--text3); min-width: 26px; line-height: 1.1;
+  }
+  .trend-rank.hot { color: var(--red); }
+  .trend-item-title { font-size: 12px; color: var(--text); line-height: 1.45; margin-bottom: 4px; }
+  .trend-item-views { font-size: 10px; color: var(--text3); }
+
+  /* COMPANIES */
+  .companies-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .company-card {
+    background: var(--bg3); border: 1px solid var(--border2);
+    border-radius: 10px; padding: 12px 10px;
+    transition: all 0.2s; cursor: pointer;
+  }
+  .company-card:hover { border-color: var(--border); transform: translateY(-1px); }
+  .co-logo { font-size: 22px; margin-bottom: 6px; }
+  .co-name { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+  .co-change { font-size: 11px; font-weight: 600; font-family: var(--font-mono); }
+  .up { color: var(--green); }
+  .down { color: var(--red); }
+
+  /* STATS */
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .stat-card {
+    background: var(--bg3); border-radius: 10px; padding: 12px;
+    text-align: center;
+  }
+  .stat-val { font-size: 26px; font-weight: 700; font-family: var(--font-display); line-height: 1; margin-bottom: 4px; }
+  .stat-label { font-size: 10px; color: var(--text3); font-weight: 500; }
+
+  /* ARTICLE MODAL */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(7,9,15,0.92);
+    backdrop-filter: blur(16px);
+    display: none; align-items: center; justify-content: center;
+    padding: 24px;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal-box {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    max-width: 720px; width: 100%;
+    max-height: 88vh; overflow-y: auto;
+    position: relative;
+    animation: modalPop 0.35s cubic-bezier(0.34,1.56,0.64,1);
+    scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+  }
+  @keyframes modalPop { from{opacity:0;transform:scale(0.9) translateY(24px)} to{opacity:1;transform:scale(1) translateY(0)} }
+
+  .modal-close-row {
+    position: sticky; top: 0; z-index: 10; display: flex; justify-content: flex-end;
+    padding: 16px 16px 0; background: var(--bg2); border-radius: 18px 18px 0 0;
+  }
+  .modal-close-btn {
+    width: 34px; height: 34px; border-radius: 9px;
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--text2); cursor: pointer; font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .modal-close-btn:hover { color: var(--text); border-color: var(--accent); }
+
+  .modal-inner { padding: 4px 28px 28px; }
+  .modal-cat-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; margin-bottom: 14px; padding: 5px 12px; border-radius: 7px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .modal-headline { font-family: var(--font-display); font-size: 26px; font-weight: 700; line-height: 1.3; color: var(--text); margin-bottom: 14px; }
+  .modal-meta { display: flex; gap: 14px; align-items: center; margin-bottom: 20px; flex-wrap: wrap; }
+  .modal-src { font-size: 13px; color: var(--accent); font-weight: 600; }
+  .modal-date { font-size: 12px; color: var(--text3); }
+  .modal-views { font-size: 12px; color: var(--text3); }
+
+  .modal-hero-img {
+    width: 100%; height: 220px; border-radius: 12px; margin-bottom: 20px;
+    background: var(--surface2); display: flex; align-items: center; justify-content: center;
+    font-size: 80px; border: 1px solid var(--border2); overflow: hidden;
+    position: relative;
+  }
+  .modal-hero-gradient { position: absolute; inset: 0; }
+  .modal-hero-emoji { position: relative; z-index: 1; opacity: 0.6; }
+
+  .modal-ai-box {
+    background: rgba(79,122,255,0.06); border: 1px solid rgba(79,122,255,0.18);
+    border-radius: 10px; padding: 14px 16px; margin-bottom: 20px;
+  }
+  .modal-ai-title { font-size: 10px; font-weight: 700; color: var(--accent); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+  .modal-ai-summary { font-size: 13px; color: var(--text2); line-height: 1.7; }
+
+  .modal-text { font-size: 14px; color: var(--text2); line-height: 1.85; }
+  .modal-text p { margin-bottom: 14px; }
+  .modal-text p:last-child { margin-bottom: 0; }
+
+  .modal-tags { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border2); }
+  .modal-tag { font-size: 12px; padding: 5px 12px; border-radius: 20px; background: var(--surface); border: 1px solid var(--border2); color: var(--text2); cursor: pointer; transition: all 0.2s; }
+  .modal-tag:hover { border-color: var(--accent); color: var(--accent); }
+
+  .related-section { margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border2); }
+  .related-label { font-size: 10px; font-weight: 700; color: var(--text3); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; }
+  .related-card { padding: 10px 12px; border-radius: 10px; cursor: pointer; transition: all 0.15s; border: 1px solid transparent; }
+  .related-card:hover { background: var(--surface); border-color: var(--border2); }
+  .related-card-title { font-size: 13px; color: var(--text); line-height: 1.4; margin-bottom: 4px; }
+  .related-card-src { font-size: 11px; color: var(--text3); }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    z-index: 300;
+    background: var(--surface); border: 1px solid var(--accent);
+    border-radius: 12px; padding: 12px 20px;
+    min-width: 240px; max-width: 320px; text-align: center;
+    animation: toastIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    box-shadow: 0 8px 32px rgba(79,122,255,0.25);
+  }
+  @keyframes toastIn { from{opacity:0;transform:translateX(-50%) translateY(20px)} to{opacity:1;transform:translateX(-50%) translateY(0)} }
+  .toast-title { font-size: 13px; font-weight: 600; color: var(--accent); margin-bottom: 3px; }
+  .toast-text { font-size: 12px; color: var(--text2); }
+
+  /* EMPTY STATE */
+  .empty-state {
+    text-align: center; padding: 60px 20px; color: var(--text3);
+  }
+  .empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; opacity: 0.5; }
+  .empty-state p { font-size: 14px; }
+
+  /* RESPONSIVE */
+  @media (max-width: 1100px) {
+    .page-wrap { grid-template-columns: 200px 1fr; }
+    .sidebar-right { display: none; }
+  }
+  @media (max-width: 760px) {
+    .page-wrap { grid-template-columns: 1fr; }
+    .sidebar-left { display: none; }
+    nav { padding: 0 16px; }
+    .search-wrap { width: 140px; }
+    .search-wrap:focus-within { width: 180px; }
+    .featured-grid { grid-template-columns: 1fr; }
+    .feat-card.hero { grid-column: auto; }
+  }
+</style>
+</head>
+<body>
+
+<div class="noise"></div>
+<div class="grid-bg"></div>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+
+<!-- NAVBAR -->
+<nav>
+  <a class="nav-logo" href="#">
+    <span class="logo-dot"></span>
+    NEURALPULSE
+  </a>
+  <div class="nav-links" id="navLinks">
+    <button class="nav-link active" onclick="setNav(this,'all')">الكل</button>
+    <button class="nav-link" onclick="setNav(this,'software')">البرمجيات</button>
+    <button class="nav-link" onclick="setNav(this,'datacenter')">مراكز البيانات</button>
+    <button class="nav-link" onclick="setNav(this,'systems')">الأنظمة</button>
+    <button class="nav-link" onclick="setNav(this,'companies')">الشركات</button>
+    <button class="nav-link" onclick="setNav(this,'research')">الأبحاث</button>
+    <button class="nav-link" onclick="setNav(this,'robotics')">الروبوتات</button>
+  </div>
+  <div class="nav-actions">
+    <div class="search-wrap">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--text3);flex-shrink:0">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input type="text" placeholder="ابحث عن خبر..." id="searchInput" oninput="onSearch(this.value)">
+    </div>
+    <button class="icon-btn" id="darkBtn" onclick="toggleDark()" title="تبديل الوضع">🌙</button>
+    <button class="icon-btn" onclick="viewBookmarks()" title="المحفوظات">🔖</button>
+    <button class="icon-btn notif-wrap" onclick="openNotif()" title="الإشعارات">
+      🔔
+      <span class="notif-badge" id="notifBadge"></span>
+    </button>
+  </div>
+</nav>
+
+<!-- TICKER -->
+<div class="ticker-bar">
+  <div class="ticker-inner" id="tickerEl">
+    <span class="ticker-item"><span class="ticker-label">عاجل</span> OpenAI تطلق GPT-5 رسمياً بقدرات استدلال متعددة الوسائط <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item"><span class="ticker-label">جديد</span> Google DeepMind يحقق تقدماً في الاستدلال المنطقي لحل المعادلات <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item"><span class="ticker-label">رائج</span> Boston Dynamics تكشف عن Atlas Pro بقدرات حركية مذهلة <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item"><span class="ticker-label">حصري</span> Anthropic تحصل على 4 مليار دولار تمويل جديد من Amazon <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item"><span class="ticker-label">بحث</span> AI يكتشف بروتيناً جديداً قد يُحدث ثورة في علاج السرطان <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item"><span class="ticker-label">تقنية</span> NVIDIA تعلن عن شريحة H300 GPU الأسرع في تاريخها <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item"><span class="ticker-label">عاجل</span> OpenAI تطلق GPT-5 رسمياً بقدرات استدلال متعددة الوسائط <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item"><span class="ticker-label">جديد</span> Google DeepMind يحقق تقدماً في الاستدلال المنطقي لحل المعادلات <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item"><span class="ticker-label">رائج</span> Boston Dynamics تكشف عن Atlas Pro بقدرات حركية مذهلة <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item"><span class="ticker-label">حصري</span> Anthropic تحصل على 4 مليار دولار تمويل جديد من Amazon <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item"><span class="ticker-label">بحث</span> AI يكتشف بروتيناً جديداً قد يُحدث ثورة في علاج السرطان <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item"><span class="ticker-label">تقنية</span> NVIDIA تعلن عن شريحة H300 GPU الأسرع في تاريخها <span class="ticker-sep">◆</span></span>
+  </div>
+</div>
+
+<!-- PAGE LAYOUT -->
+<div class="page-wrap">
+
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar-left">
+    <div class="sidebar-section">
+      <div class="sidebar-label">الأقسام</div>
+      <button class="cat-btn active" onclick="setCat('all',this)">
+        <span class="cat-icon" style="background:rgba(79,122,255,0.1)">📰</span>
+        جميع الأخبار <span class="cat-count" id="c-all">12</span>
+      </button>
+      <button class="cat-btn" onclick="setCat('software',this)">
+        <span class="cat-icon" style="background:rgba(6,182,212,0.1)">💻</span>
+        البرمجيات <span class="cat-count" id="c-software">0</span>
+      </button>
+      <button class="cat-btn" onclick="setCat('datacenter',this)">
+        <span class="cat-icon" style="background:rgba(124,58,237,0.1)">🏢</span>
+        مراكز البيانات <span class="cat-count" id="c-datacenter">0</span>
+      </button>
+      <button class="cat-btn" onclick="setCat('systems',this)">
+        <span class="cat-icon" style="background:rgba(245,158,11,0.1)">⚙️</span>
+        الأنظمة <span class="cat-count" id="c-systems">0</span>
+      </button>
+      <button class="cat-btn" onclick="setCat('companies',this)">
+        <span class="cat-icon" style="background:rgba(16,185,129,0.1)">🏛️</span>
+        الشركات <span class="cat-count" id="c-companies">0</span>
+      </button>
+      <button class="cat-btn" onclick="setCat('research',this)">
+        <span class="cat-icon" style="background:rgba(236,72,153,0.1)">🔬</span>
+        الأبحاث <span class="cat-count" id="c-research">0</span>
+      </button>
+      <button class="cat-btn" onclick="setCat('robotics',this)">
+        <span class="cat-icon" style="background:rgba(239,68,68,0.1)">🤖</span>
+        الروبوتات <span class="cat-count" id="c-robotics">0</span>
+      </button>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">المحفوظات</div>
+      <div id="savedLabel" style="font-size:12px;color:var(--text3);padding:0 10px">لا توجد أخبار محفوظة</div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">كلمات رائجة</div>
+      <div class="trend-tags">
+        <span class="trend-tag" onclick="onSearch('GPT-5')">GPT-5</span>
+        <span class="trend-tag" onclick="onSearch('Gemini')">Gemini</span>
+        <span class="trend-tag" onclick="onSearch('LLM')">LLM</span>
+        <span class="trend-tag" onclick="onSearch('روبوت')">روبوت</span>
+        <span class="trend-tag" onclick="onSearch('NVIDIA')">NVIDIA</span>
+        <span class="trend-tag" onclick="onSearch('Claude')">Claude</span>
+        <span class="trend-tag" onclick="onSearch('AGI')">AGI</span>
+        <span class="trend-tag" onclick="onSearch('Sora')">Sora</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main-content">
+
+    <!-- STATUS BAR -->
+    <div class="status-bar">
+      <div class="status-left">
+        <div class="live-indicator"><div class="live-dot"></div>مباشر</div>
+        <div class="clock" id="clockEl">--:--:--</div>
+        <div class="news-counter">عرض <strong id="shownCount">12</strong> من <strong id="totalCount">12</strong> خبر</div>
+      </div>
+      <div class="refresh-section">
+        <div class="timer-wrap">
+          <div class="timer-label">التحديث القادم</div>
+          <div class="timer-bar"><div class="timer-fill" id="timerFill" style="width:100%"></div></div>
+        </div>
+        <button class="btn-refresh" onclick="doRefresh()" id="refBtn">
+          <span class="spin-icon" id="spinEl">↻</span> تحديث
+        </button>
+      </div>
+    </div>
+
+    <!-- FEATURED -->
+    <div class="section-head"><div class="section-head-title">⭐ الأخبار المميزة</div></div>
+    <div class="featured-grid" id="featuredGrid"></div>
+
+    <!-- TABS -->
+    <div class="tabs-wrap">
+      <button class="tab-btn active" onclick="setTab(this,'latest')">🕒 أحدث الأخبار</button>
+      <button class="tab-btn" onclick="setTab(this,'popular')">🔥 الأكثر قراءة</button>
+      <button class="tab-btn" onclick="setTab(this,'research')">🔬 الأبحاث</button>
+    </div>
+
+    <div class="filter-row" id="filterRow"></div>
+    <div class="news-list" id="newsList"></div>
+
+  </main>
+
+  <!-- RIGHT SIDEBAR -->
+  <aside class="sidebar-right">
+
+    <div class="ai-daily">
+      <div class="ai-daily-head">
+        <span class="ai-spark">✦</span>
+        <span class="ai-label">ملخص الذكاء الاصطناعي</span>
+        <span class="ai-date" id="todayDate"></span>
+      </div>
+      <div class="ai-text">يهيمن قطاع نماذج اللغة الكبيرة على المشهد اليوم مع إطلاقات متزامنة من كبار المنافسين. تُشير الأخبار إلى تسارع غير مسبوق في الاستثمارات ببنية تحتية الذكاء الاصطناعي على المستوى العالمي، مع تقدم ملحوظ في مجال الروبوتات والأبحاث العلمية.</div>
+    </div>
+
+    <div class="widget">
+      <div class="widget-head">📈 الرائج الآن</div>
+      <div id="trendingEl"></div>
+    </div>
+
+    <div class="widget">
+      <div class="widget-head">🏢 أبرز الشركات</div>
+      <div class="companies-grid" id="companiesEl"></div>
+    </div>
+
+    <div class="widget">
+      <div class="widget-head">📊 إحصائيات اليوم</div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-val" style="color:var(--accent)" id="statNews">12</div><div class="stat-label">خبر اليوم</div></div>
+        <div class="stat-card"><div class="stat-val" style="color:var(--green)">12</div><div class="stat-label">مصدر نشط</div></div>
+        <div class="stat-card"><div class="stat-val" style="color:var(--pink)" id="statSaved">0</div><div class="stat-label">محفوظ</div></div>
+        <div class="stat-card"><div class="stat-val" style="color:var(--orange)">6</div><div class="stat-label">أقسام</div></div>
+      </div>
+    </div>
+
+  </aside>
+</div>
+
+<!-- ARTICLE MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="onOverlayClick(event)">
+  <div class="modal-box">
+    <div class="modal-close-row">
+      <button class="modal-close-btn" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-inner" id="modalInner"></div>
+  </div>
+</div>
+
+<script>
+// =====================
+// DATA
+// =====================
+const CATS = {
+  software:   { label:'البرمجيات',     color:'#06b6d4', bg:'rgba(6,182,212,0.12)'   },
+  datacenter: { label:'مراكز البيانات', color:'#7c3aed', bg:'rgba(124,58,237,0.12)' },
+  systems:    { label:'الأنظمة',        color:'#f59e0b', bg:'rgba(245,158,11,0.12)'  },
+  companies:  { label:'الشركات',        color:'#10b981', bg:'rgba(16,185,129,0.12)'  },
+  research:   { label:'الأبحاث',        color:'#ec4899', bg:'rgba(236,72,153,0.12)'  },
+  robotics:   { label:'الروبوتات',      color:'#ef4444', bg:'rgba(239,68,68,0.12)'   },
+};
+
+const NEWS = [
+  { id:1,  cat:'software',   title:'OpenAI تطلق GPT-5 رسمياً بقدرات استدلال متقدمة تتجاوز أفضل البشر في الاختبارات الموحدة',            source:'OpenAI Blog',  time:'منذ 12 دقيقة', views:48200, emoji:'🧠', g1:'#0d0527', g2:'#080f2e', summary:'يتميز GPT-5 بدقة تفوق 40% مقارنةً بسابقه في مهام الاستدلال المعقد، مع دعم الوسائط المتعددة.', content:'أعلنت OpenAI اليوم عن إطلاق نموذجها الجديد GPT-5 الذي يُعدّ قفزة نوعية في مجال الذكاء الاصطناعي. يتمتع النموذج الجديد بقدرات استدلال متقدمة تفوق أداء أفضل البشر في اختبارات معيارية متعددة.\n\nيدعم النموذج معالجة النصوص والصور والصوت والفيديو في آنٍ واحد، مما يجعله نموذجاً متعدد الوسائط بامتياز. وتشير التقارير إلى أن النموذج يحقق نتائج استثنائية في الرياضيات والبرمجة والاستدلال المنطقي.\n\nيُتوقع أن يُحدث هذا الإطلاق تحولاً جذرياً في قطاع الذكاء الاصطناعي التوليدي، خاصةً مع انخفاض التكاليف التشغيلية بنسبة 50% مقارنةً بالإصدار السابق.', tags:['GPT-5','OpenAI','LLM','نماذج لغوية','ذكاء اصطناعي'], featured:true },
+  { id:2,  cat:'companies',  title:'Microsoft تستثمر 10 مليارات دولار إضافية في البنية التحتية للذكاء الاصطناعي عبر 15 دولة',           source:'Reuters',      time:'منذ 28 دقيقة', views:31500, emoji:'💰', g1:'#071a0a', g2:'#051525', summary:'خطة استثمارية ضخمة تشمل بناء مراكز بيانات جديدة في أوروبا وآسيا وأمريكا اللاتينية.', content:'كشفت Microsoft عن خطط طموحة للاستثمار في البنية التحتية للذكاء الاصطناعي بقيمة تتجاوز 10 مليارات دولار.\n\nتشمل الخطة بناء مراكز بيانات متطورة في 15 دولة حول العالم، مع التركيز على منطقتي الشرق الأوسط وجنوب شرق آسيا.\n\nوصرح ساتيا ناديلا، الرئيس التنفيذي لـ Microsoft، بأن هذا الاستثمار يعكس التزام الشركة الراسخ بقيادة موجة الذكاء الاصطناعي على المستوى العالمي.', tags:['Microsoft','استثمار','بنية تحتية','مراكز بيانات'], featured:true },
+  { id:3,  cat:'research',   title:'DeepMind ينشر بحثاً تاريخياً في حل معادلات رياضية معقدة بدون بيانات تدريب مسبقة',                   source:'Nature',       time:'منذ 45 دقيقة', views:22800, emoji:'🔬', g1:'#160a20', g2:'#07150a', summary:'خوارزمية جديدة تحل معادلات تفاضلية جزئية بدقة 99.7% دون الحاجة لبيانات مسبقة.', content:'نشر فريق من باحثي Google DeepMind بحثاً علمياً في مجلة Nature يصف خوارزمية ثورية قادرة على حل المعادلات التفاضلية الجزئية بدقة غير مسبوقة.\n\nتعتمد الخوارزمية على نهج التعلم الذاتي المعزز، مما يُمكّنها من التعلم دون الحاجة إلى بيانات تدريب مسبقة.\n\nيُفتح هذا الاكتشاف آفاقاً واسعة في مجالات الفيزياء الحسابية وعلم المناخ والهندسة الكيميائية.', tags:['DeepMind','رياضيات','بحث علمي','Nature','تعلم ذاتي'] },
+  { id:4,  cat:'robotics',   title:'Boston Dynamics يكشف عن روبوت Atlas Pro الجديد بقدرات حركية تضاهي الإنسان',                           source:'TechCrunch',   time:'منذ 1 ساعة',   views:19400, emoji:'🤖', g1:'#1a0808', g2:'#0d1520', summary:'الروبوت الجديد يستطيع الجري بسرعة 12 كم/ساعة وحمل أوزان تصل إلى 50 كيلوغرام.', content:'أعلنت Boston Dynamics عن الجيل الجديد من روبوتات Atlas بمزايا حركية متطورة تتضمن قدرةً على التوازن في البيئات غير المستقرة وتسلق الأدراج بأمان.\n\nيُعدّ هذا الروبوت الأكثر تطوراً من حيث الرشاقة والقدرة على التكيف مع البيئات المختلفة، وهو مخصص في المرحلة الأولى لبيئات المصانع الخطرة.\n\nتعتزم الشركة بدء تسليم الوحدات التجارية الأولى مطلع عام 2026.', tags:['Boston Dynamics','روبوتات','Atlas','تقنية'] },
+  { id:5,  cat:'datacenter', title:'NVIDIA تعلن عن H300 GPU الأسرع في تاريخها بأداء يفوق H100 بستة أضعاف مع استهلاك طاقة أقل',        source:'NVIDIA Blog',  time:'منذ 2 ساعة',   views:35600, emoji:'⚡', g1:'#0a1a08', g2:'#161200', summary:'الشريحة الجديدة تستهلك طاقة أقل بنسبة 30% مع قدرة حوسبة أعلى بكثير.', content:'كشفت NVIDIA عن شريحة H300 الجديدة في مؤتمرها السنوي GTC 2025. توفر الشريحة أداءً استثنائياً لتدريب نماذج الذكاء الاصطناعي الكبيرة.\n\nيستند التصميم الجديد إلى معمارية Blackwell Ultra التي تُمكّن من معالجة تريليون معامل في أقل من ثانيتين.\n\nأعلنت كبرى شركات السحابة الحوسبية بما فيها AWS وGoogle Cloud وAzure عن خططها للتحول إلى الشريحة الجديدة بحلول الربع الثالث من 2025.', tags:['NVIDIA','GPU','H300','أجهزة','حوسبة'] },
+  { id:6,  cat:'software',   title:'Anthropic تطلق Claude 3.7 مع قدرات تحليل بيانات ضخمة ودعم لملفات PDF والجداول مجاناً',              source:'Anthropic',    time:'منذ 3 ساعات',  views:28100, emoji:'💡', g1:'#1a1108', g2:'#08152a', summary:'النموذج الجديد يدعم تحليل ملفات CSV وقواعد البيانات مباشرةً ضمن المحادثة.', content:'أطلقت Anthropic نموذج Claude 3.7 المحدّث مع تحسينات جوهرية في قدرات تحليل البيانات والكود البرمجي والملفات.\n\nيدعم النموذج الجديد قراءة ملفات PDF التي تصل إلى 1000 صفحة وتحليل الجداول الإحصائية المعقدة.\n\nتُشير Anthropic إلى أن Claude 3.7 يتفوق على المنافسين في مهام الكود البرمجي والاستدلال العلمي وفق المعايير القياسية الدولية.', tags:['Anthropic','Claude','نماذج لغوية','PDF'] },
+  { id:7,  cat:'systems',    title:'Meta تطلق نظام LLaMA Mobile للذكاء الاصطناعي المفتوح المصدر الذي يعمل على الهاتف دون إنترنت',       source:'Meta AI Blog', time:'منذ 4 ساعات',  views:16900, emoji:'📱', g1:'#08182a', g2:'#1a0820', summary:'LLaMA Mobile يعمل بكفاءة عالية على أجهزة الهاتف دون الحاجة لاتصال بالإنترنت.', content:'أعلنت Meta عن إطلاق نظام ذكاء اصطناعي مبتكر يمكّن تشغيل نماذج لغوية كبيرة محلياً على الهواتف الذكية دون الحاجة لاتصال بالإنترنت.\n\nيعتمد النظام على تقنيات ضغط متقدمة تُقلّص حجم النموذج إلى 2GB مع الحفاظ على 90% من الأداء الأصلي.\n\nسيكون النظام متاحاً للمطورين قريباً عبر مستودعات GitHub بترخيص مفتوح المصدر.', tags:['Meta','LLaMA','مفتوح المصدر','Mobile','AI'] },
+  { id:8,  cat:'research',   title:'باحثو MIT يطورون خوارزمية تعلم آلي تتعلم من مثال واحد فقط بدقة تصل إلى 94% في مهام متنوعة',         source:'MIT CSAIL',    time:'منذ 5 ساعات',  views:14200, emoji:'🎓', g1:'#0d0d1a', g2:'#1a0d08', summary:'تقنية Few-Shot جديدة تُحدث ثورة في تدريب نماذج الذكاء الاصطناعي بموارد محدودة.', content:'نشر فريق من معهد MIT بحثاً يصف خوارزمية تعلم آلي جديدة تستطيع تعلّم مهام جديدة من مثال واحد فقط بدقة تبلغ 94%.\n\nتعتمد الخوارزمية على بنية Transformer معدّلة مع طبقات ذاكرة خارجية تُمكّنها من استيعاب المعلومات بكفاءة استثنائية.\n\nيرى الباحثون أن هذه التقنية ستُغير قواعد اللعبة في مجالات الرعاية الصحية والروبوتات والأتمتة الصناعية.', tags:['MIT','Few-Shot','تعلم آلي','أبحاث','نماذج'] },
+  { id:9,  cat:'companies',  title:'Tesla تعلن عن Optimus Gen 3 مع بدء الإنتاج الضخم نهاية 2025 بسعر 20000 دولار للوحدة',              source:'Tesla IR',     time:'منذ 6 ساعات',  views:41300, emoji:'⚡', g1:'#0a0a0a', g2:'#1a0808', summary:'الروبوت الجديد يستطيع أداء 80% من مهام المصنع باستقلالية تامة بسعر منافس.', content:'أكد إيلون ماسك خلال اجتماع المساهمين السنوي أن روبوت Optimus الجيل الثالث سيبدأ خط الإنتاج بحلول نهاية العام الجاري.\n\nيتميز الجيل الجديد بقدرات إدراك محسّنة بفضل شبكة عصبية مُخصصة للرؤية ثلاثية الأبعاد، مما يُمكّنه من أداء مهام التجميع الدقيق في خطوط الإنتاج.\n\nأشارت Tesla إلى هدفها إنتاج مليون وحدة سنوياً بحلول 2027.', tags:['Tesla','Optimus','روبوتات','إيلون ماسك','إنتاج'] },
+  { id:10, cat:'datacenter', title:'أمازون تبني أكبر مركز بيانات للذكاء الاصطناعي في الشرق الأوسط داخل السعودية بقيمة 5.3 مليار دولار', source:'AWS Blog',      time:'منذ 7 ساعات',  views:23700, emoji:'🏗️', g1:'#0a1508', g2:'#151a08', summary:'المشروع الضخم سيوفر قدرة حوسبة استثنائية لمنطقة الشرق الأوسط وأفريقيا بأكملها.', content:'أعلنت Amazon Web Services عن بدء إنشاء مركز بيانات ضخم في المملكة العربية السعودية لخدمة منطقة الشرق الأوسط وأفريقيا.\n\nسيستضيف المشروع آلاف الخوادم المتخصصة في الذكاء الاصطناعي ومعالجة البيانات الضخمة، ويُتوقع اكتمال المرحلة الأولى في 2026.\n\nوقّعت Amazon شراكات استراتيجية مع عدد من الشركات السعودية الكبرى لضمان تكامل المشروع مع أهداف رؤية 2030.', tags:['Amazon','AWS','السعودية','مراكز البيانات','سحابة'] },
+  { id:11, cat:'software',   title:'Google تدمج Gemini Ultra مباشرةً في جميع منتجاتها مجاناً لمستخدمي Workspace في تحول غير مسبوق',   source:'Google Blog',  time:'منذ 8 ساعات',  views:29800, emoji:'🔍', g1:'#08101a', g2:'#1a0808', summary:'أكثر من 3 مليار مستخدم سيحصلون على إمكانات Gemini Ultra مجاناً ضمن تطبيقات Google.', content:'أعلنت Google عن دمج نموذج Gemini Ultra في جميع تطبيقات Workspace بما فيها Gmail وDocs وSheets وSlides دون تكلفة إضافية.\n\nيُعدّ هذا التحول الأوسع من نوعه في تاريخ Google، إذ سيستفيد منه أكثر من 3 مليارات مستخدم حول العالم.\n\nتتضمن الميزات الجديدة تلخيص الاجتماعات تلقائياً وكتابة رسائل البريد الإلكتروني وتحليل الجداول بدقة عالية.', tags:['Google','Gemini','Workspace','مجاني','ذكاء اصطناعي'] },
+  { id:12, cat:'robotics',   title:'Figure AI تكشف عن روبوتها Figure 02 الذي يستطيع تعلم مهمة جديدة في 10 دقائق فقط من الملاحظة',    source:'Figure AI',    time:'منذ 9 ساعات',  views:17600, emoji:'🦾', g1:'#1a1208', g2:'#081218', summary:'الروبوت الجديد يعتمد على التعلم بالملاحظة لاكتساب مهارات جديدة دون برمجة يدوية.', content:'كشفت شركة Figure AI الناشئة عن روبوتها الجديد Figure 02 الذي يتمتع بقدرة استثنائية على تعلم المهام الجديدة من مجرد مشاهدتها.\n\nيعتمد الروبوت على نظام رؤية متطور ونموذج لغوي مدمج يُمكّنه من فهم التعليمات باللغة الطبيعية وتنفيذها فورياً.\n\nأبدت كبرى شركات الصناعة اهتماماً بالغاً بالروبوت، مع توقعات بعقد شراكات تجارية كبرى خلال الأشهر القادمة.', tags:['Figure AI','روبوتات','تعلم الآلة','روبوتات صناعية'] },
+];
+
+// =====================
+// STATE
+// =====================
+const state = {
+  bookmarks: new Set(),
+  cat: 'all',
+  tab: 'latest',
+  search: '',
+  countdown: 60,
+  darkMode: true,
+};
+
+// =====================
+// HELPERS
+// =====================
+function fmtViews(v) {
+  return v >= 1000 ? (v/1000).toFixed(1)+'k' : v;
+}
+
+function getToday() {
+  return new Date().toLocaleDateString('ar-SA', {day:'numeric',month:'long',year:'numeric'});
+}
+
+function getFiltered() {
+  let list = [...NEWS];
+  if (state.cat !== 'all') list = list.filter(n => n.cat === state.cat);
+  if (state.search) {
+    const q = state.search.toLowerCase();
+    list = list.filter(n => n.title.toLowerCase().includes(q) || n.tags.some(t => t.toLowerCase().includes(q)));
+  }
+  if (state.tab === 'popular') list = list.sort((a,b) => b.views - a.views);
+  if (state.tab === 'research') list = list.filter(n => n.cat === 'research');
+  return list;
+}
+
+// =====================
+// RENDER
+// =====================
+function renderAll() {
+  renderFeatured();
+  renderNewsList();
+  renderFilters();
+  renderCounts();
+  renderTrending();
+  renderCompanies();
+  document.getElementById('todayDate').textContent = getToday();
+}
+
+function renderFeatured() {
+  const featured = NEWS.filter(n => n.featured);
+  document.getElementById('featuredGrid').innerHTML = featured.map((n,i) => {
+    const cat = CATS[n.cat];
+    const isSaved = state.bookmarks.has(n.id);
+    return `
+      <div class="feat-card ${i===0?'hero':''}" onclick="openArticle(${n.id})">
+        <div class="feat-visual">
+          <div class="feat-gradient" style="--g1:${n.g1};--g2:${n.g2};background:linear-gradient(135deg,${n.g1},${n.g2})"></div>
+          <div class="feat-emoji">${n.emoji}</div>
+          <div class="feat-badge" style="background:${cat.bg};color:${cat.color}">${cat.label}</div>
+          <button class="bk-btn ${isSaved?'saved':''}" onclick="event.stopPropagation();toggleBK(${n.id})">🔖</button>
+        </div>
+        <div class="feat-body">
+          <div class="feat-title">${n.title}</div>
+          ${i===0?`<div class="feat-summary">${n.summary}</div>`:''}
+          <div class="feat-meta">
+            <span class="feat-src">${n.source}</span>
+            <span class="feat-time">${n.time}</span>
+            <span class="feat-views">${fmtViews(n.views)} مشاهدة</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderNewsList() {
+  const list = getFiltered();
+  const el = document.getElementById('newsList');
+  document.getElementById('shownCount').textContent = list.length;
+  document.getElementById('totalCount').textContent = NEWS.length;
+  document.getElementById('statNews').textContent = NEWS.length;
+
+  if (!list.length) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div><p>لا توجد نتائج مطابقة</p></div>`;
+    return;
+  }
+
+  el.innerHTML = list.map((n,i) => {
+    const cat = CATS[n.cat];
+    const isSaved = state.bookmarks.has(n.id);
+    return `
+      <div class="news-item" onclick="openArticle(${n.id})">
+        <div class="news-num">${String(i+1).padStart(2,'0')}</div>
+        <div class="news-body">
+          <div class="news-title">${n.title}</div>
+          <div class="news-meta-row">
+            <span class="news-tag" style="background:${cat.bg};color:${cat.color}">${cat.label}</span>
+            <span class="news-source">${n.source}</span>
+            <span class="news-time">${n.time}</span>
+          </div>
+        </div>
+        <div class="news-actions">
+          <div class="news-views"><span>${fmtViews(n.views)}</span></div>
+          <button class="icon-btn ${isSaved?'active':''}" style="width:28px;height:28px;font-size:12px" onclick="event.stopPropagation();toggleBK(${n.id})">🔖</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderFilters() {
+  const cats = [{k:'all',l:'الكل'}, ...Object.entries(CATS).map(([k,v])=>({k,l:v.label}))];
+  document.getElementById('filterRow').innerHTML = cats.map(c => `
+    <button class="filter-btn ${state.cat===c.k?'active':''}" onclick="setCat('${c.k}',null)">${c.l}</button>
+  `).join('');
+}
+
+function renderCounts() {
+  Object.keys(CATS).forEach(k => {
+    const el = document.getElementById('c-'+k);
+    if (el) el.textContent = NEWS.filter(n=>n.cat===k).length;
+  });
+  document.getElementById('c-all').textContent = NEWS.length;
+}
+
+function renderTrending() {
+  const top = [...NEWS].sort((a,b)=>b.views-a.views).slice(0,5);
+  document.getElementById('trendingEl').innerHTML = top.map((n,i) => `
+    <div class="trend-item" onclick="openArticle(${n.id})">
+      <div class="trend-rank ${i<2?'hot':''}">${i+1}</div>
+      <div>
+        <div class="trend-item-title">${n.title.substring(0,65)}…</div>
+        <div class="trend-item-views">${fmtViews(n.views)} مشاهدة</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderCompanies() {
+  const cos = [
+    {name:'OpenAI',emoji:'🧠',ch:'+5.2%',up:true},
+    {name:'NVIDIA',emoji:'⚡',ch:'+3.8%',up:true},
+    {name:'Google',emoji:'🔍',ch:'+1.2%',up:true},
+    {name:'Meta',emoji:'🌐',ch:'-0.4%',up:false},
+  ];
+  document.getElementById('companiesEl').innerHTML = cos.map(c=>`
+    <div class="company-card">
+      <div class="co-logo">${c.emoji}</div>
+      <div class="co-name">${c.name}</div>
+      <div class="co-change ${c.up?'up':'down'}">${c.ch}</div>
+    </div>
+  `).join('');
+}
+
+// =====================
+// ARTICLE MODAL
+// =====================
+function openArticle(id) {
+  const n = NEWS.find(x=>x.id===id);
+  if (!n) return;
+  const cat = CATS[n.cat];
+  const related = NEWS.filter(x=>x.cat===n.cat&&x.id!==n.id).slice(0,3);
+  const isSaved = state.bookmarks.has(n.id);
+
+  const paragraphs = n.content.split('\n\n').filter(Boolean).map(p=>`<p>${p}</p>`).join('');
+
+  document.getElementById('modalInner').innerHTML = `
+    <span class="modal-cat-badge" style="background:${cat.bg};color:${cat.color}">${cat.label}</span>
+    <h1 class="modal-headline">${n.title}</h1>
+    <div class="modal-meta">
+      <span class="modal-src">${n.source}</span>
+      <span class="modal-date">${n.time}</span>
+      <span class="modal-views">${fmtViews(n.views)} مشاهدة</span>
+      <button onclick="toggleBK(${n.id})" id="modalBK" style="margin-right:auto;font-size:12px;padding:5px 12px;border-radius:7px;background:${isSaved?'rgba(245,158,11,0.15)':'var(--surface)'};border:1px solid ${isSaved?'var(--orange)':'var(--border2)'};color:${isSaved?'var(--orange)':'var(--text2)'};cursor:pointer;font-family:var(--font)">
+        🔖 ${isSaved?'محفوظ':'حفظ'}
+      </button>
+    </div>
+    <div class="modal-hero-img">
+      <div class="modal-hero-gradient" style="background:linear-gradient(135deg,${n.g1},${n.g2})"></div>
+      <span class="modal-hero-emoji">${n.emoji}</span>
+    </div>
+    <div class="modal-ai-box">
+      <div class="modal-ai-title">✦ ملخص بالذكاء الاصطناعي</div>
+      <div class="modal-ai-summary">${n.summary}</div>
+    </div>
+    <div class="modal-text">${paragraphs}</div>
+    <div class="modal-tags">${n.tags.map(t=>`<span class="modal-tag" onclick="onSearch('${t}')">${t}</span>`).join('')}</div>
+    ${related.length?`
+      <div class="related-section">
+        <div class="related-label">أخبار مشابهة</div>
+        ${related.map(r=>`
+          <div class="related-card" onclick="openArticle(${r.id})">
+            <div class="related-card-title">${r.title.substring(0,90)}…</div>
+            <div class="related-card-src">${r.source} · ${r.time}</div>
+          </div>
+        `).join('')}
+      </div>
+    `:''}
+  `;
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function onOverlayClick(e) {
+  if (e.target === document.getElementById('modalOverlay')) closeModal();
+}
+
+// =====================
+// BOOKMARKS
+// =====================
+function toggleBK(id) {
+  if (state.bookmarks.has(id)) {
+    state.bookmarks.delete(id);
+    toast('تم الحذف من المحفوظات', 'تمت إزالة الخبر بنجاح');
+  } else {
+    state.bookmarks.add(id);
+    toast('تم الحفظ ✓', 'أضفت هذا الخبر إلى قائمة المحفوظات');
+  }
+  updateSaved();
+  renderAll();
+}
+
+function updateSaved() {
+  const s = state.bookmarks.size;
+  document.getElementById('statSaved').textContent = s;
+  document.getElementById('savedLabel').textContent = s ? `${s} خبر محفوظ` : 'لا توجد أخبار محفوظة';
+}
+
+function viewBookmarks() {
+  if (!state.bookmarks.size) { toast('المحفوظات فارغة', 'لم تقم بحفظ أي أخبار بعد'); return; }
+  toast(`${state.bookmarks.size} أخبار محفوظة`, 'انظر إلى الشريط الجانبي لرؤيتها');
+}
+
+// =====================
+// FILTERS / NAV / TAB
+// =====================
+function setCat(cat, btn) {
+  state.cat = cat;
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderNewsList();
+  renderFilters();
+}
+
+function setNav(btn, cat) {
+  document.querySelectorAll('.nav-link').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  state.cat = cat;
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.cat-btn')[cat==='all'?0:Object.keys(CATS).indexOf(cat)+1]?.classList.add('active');
+  renderNewsList();
+  renderFilters();
+}
+
+function setTab(btn, tab) {
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  state.tab = tab;
+  renderNewsList();
+}
+
+function onSearch(val) {
+  state.search = val;
+  const input = document.getElementById('searchInput');
+  if (input) input.value = val;
+  renderNewsList();
+}
+
+// =====================
+// REFRESH
+// =====================
+function doRefresh() {
+  const spin = document.getElementById('spinEl');
+  const btn = document.getElementById('refBtn');
+  spin.classList.add('spinning');
+  btn.disabled = true;
+  setTimeout(() => {
+    spin.classList.remove('spinning');
+    btn.disabled = false;
+    state.countdown = 60;
+    toast('تم التحديث ✓', 'تم جلب أحدث الأخبار من المصادر');
+    renderAll();
+  }, 1800);
+}
+
+function startTimer() {
+  const fill = document.getElementById('timerFill');
+  setInterval(() => {
+    state.countdown--;
+    if (state.countdown <= 0) {
+      state.countdown = 60;
+      doRefresh();
+    }
+    fill.style.width = (state.countdown/60*100)+'%';
+  }, 1000);
+}
+
+// =====================
+// CLOCK
+// =====================
+function updateClock() {
+  document.getElementById('clockEl').textContent = new Date().toLocaleTimeString('ar-SA', {hour12:false});
+}
+
+// =====================
+// DARK MODE
+// =====================
+function toggleDark() {
+  state.darkMode = !state.darkMode;
+  const r = document.documentElement.style;
+  if (!state.darkMode) {
+    r.setProperty('--bg','#f4f6fb');
+    r.setProperty('--bg2','#eef0f7');
+    r.setProperty('--bg3','#e4e8f2');
+    r.setProperty('--surface','#ffffff');
+    r.setProperty('--surface2','#f4f6fb');
+    r.setProperty('--text','#0a1224');
+    r.setProperty('--text2','#3a4a6b');
+    r.setProperty('--text3','#8592aa');
+    r.setProperty('--border','rgba(79,122,255,0.22)');
+    r.setProperty('--border2','rgba(79,122,255,0.1)');
+    document.getElementById('darkBtn').textContent = '☀️';
+  } else {
+    r.setProperty('--bg','#07090f');
+    r.setProperty('--bg2','#0d1117');
+    r.setProperty('--bg3','#111827');
+    r.setProperty('--surface','#161d2e');
+    r.setProperty('--surface2','#1a2235');
+    r.setProperty('--text','#e8edf5');
+    r.setProperty('--text2','#9aaabf');
+    r.setProperty('--text3','#5d6e85');
+    r.setProperty('--border','rgba(99,140,255,0.15)');
+    r.setProperty('--border2','rgba(99,140,255,0.08)');
+    document.getElementById('darkBtn').textContent = '🌙';
+  }
+}
+
+// =====================
+// TOAST / NOTIF
+// =====================
+function toast(title, text) {
+  document.querySelector('.toast')?.remove();
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = `<div class="toast-title">${title}</div><div class="toast-text">${text}</div>`;
+  document.body.appendChild(el);
+  setTimeout(()=>{ el.style.opacity='0'; el.style.transition='opacity 0.5s'; }, 3000);
+  setTimeout(()=>el.remove(), 3600);
+}
+
+function openNotif() {
+  toast('🔔 الإشعارات', 'لا توجد إشعارات جديدة في الوقت الحالي');
+  document.getElementById('notifBadge').style.display = 'none';
+}
+
+// Keyboard: Escape to close modal
+document.addEventListener('keydown', e => { if (e.key==='Escape') closeModal(); });
+
+// =====================
+// INIT
+// =====================
+renderAll();
+startTimer();
+setInterval(updateClock, 1000);
+updateClock();
+
+setTimeout(()=>{
+  toast('🔥 خبر عاجل جديد', 'OpenAI تطلق GPT-5 رسمياً — اضغط لقراءة التفاصيل');
+  document.getElementById('notifBadge').style.display = 'block';
+}, 3500);
+</script>
+</body>
+</html>
