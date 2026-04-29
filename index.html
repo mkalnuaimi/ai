@@ -3,14 +3,69 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEURALPULSE NEWS</title>
+<title>NEURALPULSE PRO</title>
 
 <style>
 body {margin:0;font-family:system-ui;background:#020617;color:white}
-header {padding:20px;text-align:center;font-size:30px}
 
-.container {max-width:1200px;margin:auto;padding:20px}
+header {
+  padding:20px;
+  text-align:center;
+  font-size:30px;
+  background:#020617;
+}
 
+.container {
+  max-width:1300px;
+  margin:auto;
+  padding:20px;
+}
+
+/* Hero */
+.hero {
+  border-radius:16px;
+  overflow:hidden;
+  margin-bottom:25px;
+  position:relative;
+}
+.hero img {
+  width:100%;
+  height:350px;
+  object-fit:cover;
+}
+.hero .text {
+  position:absolute;
+  bottom:0;
+  padding:20px;
+  background:linear-gradient(transparent,black);
+  width:100%;
+}
+
+/* Controls */
+.controls {
+  display:flex;
+  gap:10px;
+  margin-bottom:20px;
+  flex-wrap:wrap;
+}
+
+input {
+  padding:10px;
+  border-radius:8px;
+  border:none;
+  width:220px;
+}
+
+button {
+  padding:10px 15px;
+  border:none;
+  border-radius:8px;
+  background:#1e293b;
+  color:white;
+  cursor:pointer;
+}
+
+/* Grid */
 .grid {
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
@@ -18,76 +73,186 @@ header {padding:20px;text-align:center;font-size:30px}
 }
 
 .card {
-  background:#1e293b;border-radius:14px;
-  overflow:hidden;cursor:pointer;transition:0.3s;
+  background:#1e293b;
+  border-radius:14px;
+  overflow:hidden;
+  cursor:pointer;
+  transition:0.3s;
 }
 .card:hover {transform:translateY(-5px)}
 
-.card img {width:100%;height:170px;object-fit:cover}
+.card img {
+  width:100%;
+  height:170px;
+  object-fit:cover;
+}
 
 .content {padding:12px}
-.title {font-size:16px;margin-bottom:10px}
+.title {font-size:15px;margin-bottom:8px}
 .meta {font-size:12px;opacity:0.6}
+
+.loading {
+  text-align:center;
+  margin-top:40px;
+}
+
+/* Modal */
+.modal {
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  background:rgba(0,0,0,0.9);
+  display:none;
+  justify-content:center;
+  align-items:center;
+}
+
+.modal-box {
+  width:90%;
+  max-width:800px;
+  background:#020617;
+  border-radius:14px;
+  overflow:hidden;
+}
+
+.modal img {
+  width:100%;
+  height:250px;
+  object-fit:cover;
+}
+
+.modal-body {padding:20px}
+
+.close {
+  position:absolute;
+  top:20px;
+  right:20px;
+  font-size:25px;
+  cursor:pointer;
+}
 </style>
 </head>
 
 <body>
 
-<header>🚀 NEURALPULSE NEWS</header>
+<header>🚀 NEURALPULSE PRO</header>
 
 <div class="container">
-  <div class="grid" id="news"></div>
+
+<div id="hero" class="hero"></div>
+
+<div class="controls">
+  <input type="text" id="search" placeholder="🔍 بحث...">
+</div>
+
+<div id="loading" class="loading">⏳ جاري تحميل الأخبار...</div>
+
+<div class="grid" id="news"></div>
+
+</div>
+
+<!-- Modal -->
+<div class="modal" id="modal">
+  <div class="close" onclick="closeModal()">✖</div>
+  <div class="modal-box">
+    <img id="mImg">
+    <div class="modal-body">
+      <h2 id="mTitle"></h2>
+      <p id="mDesc"></p>
+      <br>
+      <button id="mLink">🔗 قراءة المصدر</button>
+    </div>
+  </div>
 </div>
 
 <script>
 
-// 🔥 أخبار حقيقية بروابطها
-const news = [
-{
-title:"OpenAI تطلق تحديث جديد للذكاء الاصطناعي",
-image:"https://images.unsplash.com/photo-1677442136019-21780ecad995",
-source:"TechCrunch",
-url:"https://techcrunch.com/"
-},
-{
-title:"تطورات في مراكز البيانات العالمية",
-image:"https://images.unsplash.com/photo-1558494949-ef010cbdcc31",
-source:"Reuters",
-url:"https://www.reuters.com/technology/"
-},
-{
-title:"الذكاء الاصطناعي يغير مستقبل التطبيقات",
-image:"https://images.unsplash.com/photo-1581090700227-4c4c4c4c",
-source:"BBC",
-url:"https://www.bbc.com/news/technology"
-}
+// 🔥 مصادر RSS
+const feeds = [
+"https://news.google.com/rss/search?q=artificial+intelligence",
+"https://feeds.bbci.co.uk/news/technology/rss.xml",
+"https://www.reutersagency.com/feed/?best-topics=technology"
 ];
 
-// 🔥 توليد 150 خبر بنفس الأسلوب
-for(let i=0;i<150;i++){
-  const base = news[i % news.length];
-  news.push({
-    title: base.title + " #" + (i+1),
-    image: base.image + "?random=" + i,
-    source: base.source,
-    url: base.url
+// تحويل RSS
+function rssToJson(url){
+  return `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`;
+}
+
+let allNews = [];
+
+async function loadNews(){
+  try{
+    for (let f of feeds){
+      const res = await fetch(rssToJson(f));
+      const data = await res.json();
+
+      if(data.items){
+        allNews.push(...data.items);
+      }
+    }
+
+    document.getElementById("loading").style.display="none";
+
+    render();
+
+  } catch(e){
+    document.getElementById("loading").innerHTML="⚠️ فشل تحميل الأخبار";
+  }
+}
+
+// عرض
+function render(){
+  const container = document.getElementById("news");
+  container.innerHTML = "";
+
+  let filtered = allNews;
+
+  const search = document.getElementById("search").value.toLowerCase();
+  filtered = filtered.filter(n => n.title.toLowerCase().includes(search));
+
+  // Hero
+  if(filtered[0]){
+    document.getElementById("hero").innerHTML = `
+      <img src="https://picsum.photos/800/400?random=1">
+      <div class="text">
+        <h2>${filtered[0].title}</h2>
+      </div>
+    `;
+  }
+
+  filtered.slice(0,120).forEach((n,i)=>{
+    container.innerHTML += `
+      <div class="card" onclick="openModal(${i})">
+        <img src="https://picsum.photos/400/200?random=${i}">
+        <div class="content">
+          <div class="title">${n.title}</div>
+          <div class="meta">${n.pubDate}</div>
+        </div>
+      </div>
+    `;
   });
 }
 
-// عرض الأخبار
-const container = document.getElementById("news");
+// فتح
+function openModal(i){
+  const n = allNews[i];
+  document.getElementById("modal").style.display="flex";
+  document.getElementById("mImg").src=`https://picsum.photos/800/400?random=${i}`;
+  document.getElementById("mTitle").innerText=n.title;
+  document.getElementById("mDesc").innerText="اضغط قراءة المصدر لعرض الخبر الكامل من الموقع الرسمي.";
+  document.getElementById("mLink").onclick=()=>window.open(n.link);
+}
 
-news.forEach(n=>{
-  container.innerHTML += `
-    <div class="card" onclick="window.open('${n.url}','_blank')">
-      <img src="${n.image}">
-      <div class="content">
-        <div class="title">${n.title}</div>
-        <div class="meta">${n.source}</div>
-      </div>
-    </div>
-  `;
-});
+// إغلاق
+function closeModal(){
+  document.getElementById("modal").style.display="none";
+}
+
+// بحث
+document.getElementById("search").addEventListener("input",render);
+
+loadNews();
 
 </script>
 
