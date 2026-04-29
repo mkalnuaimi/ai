@@ -7,35 +7,9 @@
 
 <style>
 body {margin:0;font-family:system-ui;background:#020617;color:white}
-header {padding:20px;text-align:center;font-size:30px;background:#020617}
+header {padding:20px;text-align:center;font-size:30px}
 
-.container {max-width:1300px;margin:auto;padding:20px}
-
-.hero {
-  margin-bottom:30px;
-  border-radius:16px;
-  overflow:hidden;
-  position:relative;
-}
-.hero img {width:100%;height:350px;object-fit:cover}
-.hero .text {
-  position:absolute;bottom:0;padding:20px;
-  background:linear-gradient(transparent,black);
-  width:100%;
-}
-
-.controls {
-  display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap
-}
-
-input {
-  padding:10px;border-radius:8px;border:none;width:200px
-}
-
-button {
-  padding:10px 15px;border:none;border-radius:8px;
-  background:#1e293b;color:white;cursor:pointer
-}
+.container {max-width:1200px;margin:auto;padding:20px}
 
 .grid {
   display:grid;
@@ -44,39 +18,16 @@ button {
 }
 
 .card {
-  background:#1e293b;border-radius:14px;overflow:hidden;
-  cursor:pointer;transition:0.3s;
+  background:#1e293b;border-radius:14px;
+  padding:15px;cursor:pointer;transition:0.3s;
 }
 .card:hover {transform:translateY(-5px)}
 
-.card img {width:100%;height:170px;object-fit:cover}
-
-.content {padding:12px}
-.title {font-size:16px}
+.title {font-size:16px;margin-bottom:10px}
 .meta {font-size:12px;opacity:0.6}
 
 .loading {
-  text-align:center;
-  margin-top:40px;
-  opacity:0.7;
-}
-
-.modal {
-  position:fixed;top:0;left:0;width:100%;height:100%;
-  background:rgba(0,0,0,0.9);
-  display:none;justify-content:center;align-items:center;
-}
-
-.modal-box {
-  background:#020617;width:90%;max-width:800px;
-  border-radius:14px;overflow:hidden;
-}
-
-.modal img {width:100%;height:250px;object-fit:cover}
-.modal-body {padding:20px}
-
-.close {
-  position:absolute;top:20px;right:20px;font-size:25px;cursor:pointer;
+  text-align:center;margin-top:40px
 }
 </style>
 </head>
@@ -86,139 +37,45 @@ button {
 <header>🚀 NEURALPULSE X</header>
 
 <div class="container">
-
-<div id="hero" class="hero"></div>
-
-<div class="controls">
-  <input type="text" id="search" placeholder="بحث...">
-  <button onclick="setCategory('all')">الكل</button>
-  <button onclick="setCategory('ai')">AI</button>
-  <button onclick="setCategory('data')">Data Center</button>
-  <button onclick="setCategory('apps')">Apps</button>
-</div>
-
-<div id="loading" class="loading">⏳ جاري تحميل الأخبار...</div>
-<div class="grid" id="news"></div>
-
-</div>
-
-<!-- Modal -->
-<div class="modal" id="modal">
-  <div class="close" onclick="closeModal()">✖</div>
-  <div class="modal-box">
-    <img id="mImg">
-    <div class="modal-body">
-      <h2 id="mTitle"></h2>
-      <p id="mDesc"></p>
-      <br>
-      <button id="mLink">قراءة المصدر</button>
-    </div>
-  </div>
+  <div id="loading" class="loading">⏳ جاري تحميل الأخبار...</div>
+  <div class="grid" id="news"></div>
 </div>
 
 <script>
 
-const API_KEY = "e1a3805fbe9e9f5915f8a8eafb7c8d9b";
+// 🔥 RSS من Google News (AI)
+const RSS = "https://api.rss2json.com/v1/api.json?rss_url=https://news.google.com/rss/search?q=artificial+intelligence&hl=en&gl=US&ceid=US:en";
 
-let allNews = [];
-let currentCategory = "all";
-
-// Proxy URL
-const URL = `https://api.allorigins.win/raw?url=${encodeURIComponent(
-  `https://gnews.io/api/v4/search?q=artificial intelligence&lang=en&max=10&apikey=${API_KEY}`
-)}`;
-
-// تحميل الأخبار
 async function loadNews(){
   try {
-    const res = await fetch(URL);
+    const res = await fetch(RSS);
     const data = await res.json();
 
-    document.getElementById("loading").style.display = "none";
+    document.getElementById("loading").style.display="none";
 
-    if (!data.articles || data.articles.length === 0) {
-      document.getElementById("news").innerHTML =
-        "<p style='text-align:center'>⚠️ لا توجد أخبار حالياً</p>";
+    if (!data.items || data.items.length === 0) {
+      document.getElementById("news").innerHTML = "⚠️ لا توجد أخبار";
       return;
     }
 
-    allNews = data.articles;
-    render();
-
-  } catch (e) {
-    document.getElementById("loading").innerHTML =
-      "⚠️ فشل تحميل الأخبار — تحقق من الإنترنت أو API";
-  }
-}
-
-// تصنيف بسيط
-function categorize(n){
-  const t = n.title.toLowerCase();
-  if(t.includes("data")) return "data";
-  if(t.includes("app")) return "apps";
-  return "ai";
-}
-
-// عرض الأخبار
-function render(){
-  const container = document.getElementById("news");
-  container.innerHTML = "";
-
-  let filtered = allNews.filter(n=>{
-    return currentCategory==="all" || categorize(n)===currentCategory;
-  });
-
-  const search = document.getElementById("search").value.toLowerCase();
-  filtered = filtered.filter(n=>n.title.toLowerCase().includes(search));
-
-  // Hero
-  if(filtered[0]){
-    document.getElementById("hero").innerHTML = `
-      <img src="${filtered[0].image || 'https://via.placeholder.com/800x400'}">
-      <div class="text">
-        <h2>${filtered[0].title}</h2>
-      </div>
-    `;
-  }
-
-  filtered.forEach((n,i)=>{
-    container.innerHTML += `
-      <div class="card" onclick="openModal(${i})">
-        <img src="${n.image || 'https://via.placeholder.com/400x200'}">
-        <div class="content">
+    data.items.forEach(n=>{
+      document.getElementById("news").innerHTML += `
+        <div class="card" onclick="openNews('${n.link}')">
           <div class="title">${n.title}</div>
-          <div class="meta">${n.source.name}</div>
+          <div class="meta">${n.pubDate}</div>
         </div>
-      </div>
-    `;
-  });
+      `;
+    });
+
+  } catch(e){
+    document.getElementById("loading").innerHTML="⚠️ فشل التحميل";
+  }
 }
 
-// فتح الخبر
-function openModal(i){
-  const n = allNews[i];
-  document.getElementById("modal").style.display="flex";
-  document.getElementById("mImg").src=n.image;
-  document.getElementById("mTitle").innerText=n.title;
-  document.getElementById("mDesc").innerText=n.description || "";
-  document.getElementById("mLink").onclick=()=>window.open(n.url);
+function openNews(url){
+  window.open(url,"_blank");
 }
 
-// إغلاق
-function closeModal(){
-  document.getElementById("modal").style.display="none";
-}
-
-// تصنيف
-function setCategory(c){
-  currentCategory=c;
-  render();
-}
-
-// بحث
-document.getElementById("search").addEventListener("input",render);
-
-// تشغيل
 loadNews();
 
 </script>
