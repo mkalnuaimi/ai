@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEURALPULSE — منصة التقنية</title>
+<title>NEURALPULSE — AI News</title>
 
 <style>
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
+  font-family: system-ui;
   background: #0f172a;
   color: white;
 }
@@ -16,57 +16,52 @@ body {
 header {
   padding: 20px;
   text-align: center;
-  background: #020617;
-  font-size: 24px;
+  font-size: 28px;
   font-weight: bold;
-}
-
-nav {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin: 20px;
-}
-
-button {
-  padding: 10px 15px;
-  border: none;
-  cursor: pointer;
-  background: #1e293b;
-  color: white;
-  border-radius: 8px;
-}
-
-button:hover {
-  background: #38bdf8;
+  background: #020617;
 }
 
 .container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill,minmax(250px,1fr));
-  gap: 20px;
+  max-width: 1200px;
+  margin: auto;
   padding: 20px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill,minmax(300px,1fr));
+  gap: 20px;
 }
 
 .card {
   background: #1e293b;
-  padding: 15px;
-  border-radius: 12px;
+  border-radius: 14px;
+  overflow: hidden;
   transition: 0.3s;
-  text-align: center;
 }
 
-.empty {
-  text-align: center;
-  opacity: 0.6;
-  margin-top: 50px;
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.content {
+  padding: 15px;
+}
+
+.title {
   font-size: 18px;
+  margin-bottom: 10px;
 }
 
-.toggle {
-  position: fixed;
-  top: 20px;
-  right: 20px;
+.meta {
+  font-size: 12px;
+  opacity: 0.7;
 }
 </style>
 </head>
@@ -75,25 +70,59 @@ button:hover {
 
 <header>🚀 NEURALPULSE</header>
 
-<button class="toggle" onclick="toggleMode()">🌙 / ☀️</button>
-
-<nav>
-  <button onclick="filter('all')">الكل</button>
-  <button onclick="filter('data')">مراكز البيانات</button>
-  <button onclick="filter('systems')">الأنظمة</button>
-  <button onclick="filter('apps')">التطبيقات</button>
-</nav>
-
-<div id="empty" class="empty">لا توجد أخبار حالياً</div>
-<div class="container" id="news"></div>
+<div class="container">
+  <div class="grid" id="news"></div>
+</div>
 
 <script>
-let news = []; // فاضي
 
-function display(data) {
+const titles = [
+"تطورات جديدة في الذكاء الاصطناعي",
+"إطلاق منصة AI متقدمة",
+"تحسينات في مراكز البيانات",
+"ثورة في تعلم الآلة",
+"نمو تطبيقات الذكاء الاصطناعي",
+"تقنيات جديدة في الحوسبة السحابية",
+"تحديثات في الأنظمة الذكية",
+"توسع عالمي في AI",
+"حلول مبتكرة للبيانات الضخمة",
+"تقنيات مستقبلية جديدة"
+];
+
+const sources = ["TechCrunch","Reuters","BBC","Wired","The Verge","MIT Tech"];
+
+const news = [];
+
+// توليد 120 خبر احترافي
+for (let i = 0; i < 120; i++) {
+  news.push({
+    title: titles[Math.floor(Math.random()*titles.length)],
+    image: `https://picsum.photos/400/200?random=${i}`,
+    source: sources[Math.floor(Math.random()*sources.length)],
+    date: "2026"
+  });
+}
+
+// عرض الأخبار
+function display() {
   const container = document.getElementById("news");
-  const empty = document.getElementById("empty");
 
-  container.innerHTML = "";
+  news.forEach(n => {
+    container.innerHTML += `
+      <div class="card">
+        <img src="${n.image}">
+        <div class="content">
+          <div class="title">${n.title}</div>
+          <div class="meta">${n.source} • ${n.date}</div>
+        </div>
+      </div>
+    `;
+  });
+}
 
- 
+display();
+
+</script>
+
+</body>
+</html>
