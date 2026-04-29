@@ -3,124 +3,198 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEURALPULSE — AI News</title>
+<title>NEURALPULSE X</title>
 
 <style>
-body {
-  margin: 0;
-  font-family: system-ui;
-  background: #0f172a;
-  color: white;
+body {margin:0;font-family:system-ui;background:#020617;color:white}
+header {padding:20px;text-align:center;font-size:30px;background:#020617}
+.container {max-width:1300px;margin:auto;padding:20px}
+
+.hero {
+  margin-bottom:30px;
+  border-radius:16px;
+  overflow:hidden;
+  position:relative;
+}
+.hero img {width:100%;height:350px;object-fit:cover}
+.hero .text {
+  position:absolute;bottom:0;padding:20px;
+  background:linear-gradient(transparent,black);
+  width:100%;
 }
 
-header {
-  padding: 20px;
-  text-align: center;
-  font-size: 28px;
-  background: #020617;
+.controls {
+  display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap
 }
 
-.container {
-  max-width: 1200px;
-  margin: auto;
-  padding: 20px;
+input {
+  padding:10px;border-radius:8px;border:none;width:200px
+}
+
+button {
+  padding:10px 15px;border:none;border-radius:8px;
+  background:#1e293b;color:white;cursor:pointer
 }
 
 .grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill,minmax(300px,1fr));
-  gap: 20px;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:20px;
 }
 
 .card {
-  background: #1e293b;
-  border-radius: 14px;
-  overflow: hidden;
-  cursor: pointer;
-  transition: 0.3s;
+  background:#1e293b;border-radius:14px;overflow:hidden;
+  cursor:pointer;transition:0.3s;
+}
+.card:hover {transform:translateY(-5px)}
+
+.card img {width:100%;height:170px;object-fit:cover}
+
+.content {padding:12px}
+.title {font-size:16px}
+.meta {font-size:12px;opacity:0.6}
+
+.modal {
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,0.9);
+  display:none;justify-content:center;align-items:center;
 }
 
-.card:hover {
-  transform: translateY(-5px);
+.modal-box {
+  background:#020617;width:90%;max-width:800px;
+  border-radius:14px;overflow:hidden;
 }
 
-.card img {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-}
+.modal img {width:100%;height:250px;object-fit:cover}
+.modal-body {padding:20px}
 
-.content {
-  padding: 15px;
-}
-
-.title {
-  font-size: 18px;
-}
-
-.meta {
-  font-size: 12px;
-  opacity: 0.7;
-}
-
-.loading {
-  text-align: center;
-  margin-top: 50px;
-  opacity: 0.7;
+.close {
+  position:absolute;top:20px;right:20px;font-size:25px;cursor:pointer;
 }
 </style>
 </head>
 
 <body>
 
-<header>🚀 NEURALPULSE</header>
+<header>🚀 NEURALPULSE X</header>
 
 <div class="container">
-  <div id="loading" class="loading">⏳ جاري تحميل الأخبار...</div>
-  <div class="grid" id="news"></div>
+
+<div class="hero" id="hero"></div>
+
+<div class="controls">
+  <input type="text" id="search" placeholder="بحث...">
+  <button onclick="setCategory('all')">الكل</button>
+  <button onclick="setCategory('ai')">AI</button>
+  <button onclick="setCategory('data')">Data Center</button>
+  <button onclick="setCategory('apps')">Apps</button>
+</div>
+
+<div class="grid" id="news"></div>
+
+</div>
+
+<div class="modal" id="modal">
+  <div class="close" onclick="closeModal()">✖</div>
+  <div class="modal-box">
+    <img id="mImg">
+    <div class="modal-body">
+      <h2 id="mTitle"></h2>
+      <p id="mDesc"></p>
+      <br>
+      <button id="mLink">قراءة المصدر</button>
+    </div>
+  </div>
 </div>
 
 <script>
-
-// 🔑 مفتاحك
 const API_KEY = "e1a3805fbe9e9f5915f8a8eafb7c8d9b";
 
-// 🔥 Proxy لتفادي CORS
-const URL = `https://api.allorigins.win/raw?url=${encodeURIComponent(
-  `https://gnews.io/api/v4/search?q=artificial intelligence&lang=en&max=10&apikey=${API_KEY}`
-)}`;
+let allNews = [];
+let currentCategory = "all";
 
-async function getNews() {
-  try {
-    const res = await fetch(URL);
+// Proxy
+function buildURL(page){
+  return `https://api.allorigins.win/raw?url=${encodeURIComponent(
+    `https://gnews.io/api/v4/search?q=artificial intelligence&lang=en&max=10&page=${page}&apikey=${API_KEY}`
+  )}`;
+}
+
+// تحميل عدة صفحات = +100 خبر
+async function loadNews(){
+  for(let i=1;i<=10;i++){
+    const res = await fetch(buildURL(i));
     const data = await res.json();
-
-    const container = document.getElementById("news");
-    document.getElementById("loading").style.display = "none";
-
-    data.articles.forEach(n => {
-      container.innerHTML += `
-        <div class="card" onclick="openNews('${n.url}')">
-          <img src="${n.image || 'https://via.placeholder.com/400x200'}">
-          <div class="content">
-            <div class="title">${n.title}</div>
-            <div class="meta">${n.source.name} • ${new Date(n.publishedAt).toLocaleDateString()}</div>
-          </div>
-        </div>
-      `;
-    });
-
-  } catch (e) {
-    document.getElementById("loading").innerHTML = "⚠️ تأكد من اتصال الإنترنت أو المفتاح";
+    allNews.push(...data.articles);
   }
+  render();
 }
 
-function openNews(url) {
-  window.open(url, "_blank");
+// تصنيف
+function categorize(n){
+  const t = n.title.toLowerCase();
+  if(t.includes("data")) return "data";
+  if(t.includes("app")) return "apps";
+  return "ai";
 }
 
-getNews();
+// عرض
+function render(){
+  const container = document.getElementById("news");
+  container.innerHTML = "";
 
+  let filtered = allNews.filter(n=>{
+    return currentCategory==="all" || categorize(n)===currentCategory;
+  });
+
+  const search = document.getElementById("search").value.toLowerCase();
+  filtered = filtered.filter(n=>n.title.toLowerCase().includes(search));
+
+  // Hero
+  if(filtered[0]){
+    document.getElementById("hero").innerHTML = `
+      <img src="${filtered[0].image}">
+      <div class="text">
+        <h2>${filtered[0].title}</h2>
+      </div>
+    `;
+  }
+
+  filtered.forEach((n,i)=>{
+    container.innerHTML += `
+      <div class="card" onclick="openModal(${i})">
+        <img src="${n.image}">
+        <div class="content">
+          <div class="title">${n.title}</div>
+          <div class="meta">${n.source.name}</div>
+        </div>
+      </div>
+    `;
+  });
+}
+
+// فتح الخبر
+function openModal(i){
+  const n = allNews[i];
+  document.getElementById("modal").style.display="flex";
+  document.getElementById("mImg").src=n.image;
+  document.getElementById("mTitle").innerText=n.title;
+  document.getElementById("mDesc").innerText=n.description || "";
+  document.getElementById("mLink").onclick=()=>window.open(n.url);
+}
+
+function closeModal(){
+  document.getElementById("modal").style.display="none";
+}
+
+function setCategory(c){
+  currentCategory=c;
+  render();
+}
+
+document.getElementById("search").addEventListener("input",render);
+
+loadNews();
 </script>
 
 </body>
