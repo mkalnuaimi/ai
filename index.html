@@ -82,19 +82,21 @@ header {
 
 <script>
 
-// 🔑 مفتاح GNews
+// 🔑 مفتاحك
 const API_KEY = "e1a3805fbe9e9f5915f8a8eafb7c8d9b";
 
-// جلب الأخبار
+// 🔥 Proxy لتفادي CORS
+const URL = `https://api.allorigins.win/raw?url=${encodeURIComponent(
+  `https://gnews.io/api/v4/search?q=artificial intelligence&lang=en&max=10&apikey=${API_KEY}`
+)}`;
+
 async function getNews() {
   try {
-    const res = await fetch(`https://gnews.io/api/v4/search?q=artificial intelligence&lang=ar,en&max=100&apikey=${API_KEY}`);
+    const res = await fetch(URL);
     const data = await res.json();
 
     const container = document.getElementById("news");
-    const loading = document.getElementById("loading");
-
-    loading.style.display = "none";
+    document.getElementById("loading").style.display = "none";
 
     data.articles.forEach(n => {
       container.innerHTML += `
@@ -108,12 +110,11 @@ async function getNews() {
       `;
     });
 
-  } catch (error) {
-    document.getElementById("loading").innerHTML = "⚠️ خطأ في جلب الأخبار";
+  } catch (e) {
+    document.getElementById("loading").innerHTML = "⚠️ تأكد من اتصال الإنترنت أو المفتاح";
   }
 }
 
-// فتح الخبر الحقيقي
 function openNews(url) {
   window.open(url, "_blank");
 }
