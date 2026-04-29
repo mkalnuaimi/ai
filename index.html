@@ -17,7 +17,6 @@ header {
   padding: 20px;
   text-align: center;
   font-size: 28px;
-  font-weight: bold;
   background: #020617;
 }
 
@@ -37,6 +36,7 @@ header {
   background: #1e293b;
   border-radius: 14px;
   overflow: hidden;
+  cursor: pointer;
   transition: 0.3s;
 }
 
@@ -56,12 +56,50 @@ header {
 
 .title {
   font-size: 18px;
-  margin-bottom: 10px;
 }
 
 .meta {
   font-size: 12px;
   opacity: 0.7;
+}
+
+/* النافذة */
+.modal {
+  position: fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background: rgba(0,0,0,0.8);
+  display:none;
+  justify-content:center;
+  align-items:center;
+}
+
+.modal-content {
+  background:#020617;
+  max-width:700px;
+  width:90%;
+  border-radius:14px;
+  overflow:hidden;
+}
+
+.modal img {
+  width:100%;
+  height:250px;
+  object-fit:cover;
+}
+
+.modal-body {
+  padding:20px;
+}
+
+.close {
+  position:absolute;
+  top:20px;
+  right:20px;
+  font-size:25px;
+  cursor:pointer;
 }
 </style>
 </head>
@@ -74,32 +112,28 @@ header {
   <div class="grid" id="news"></div>
 </div>
 
+<!-- النافذة -->
+<div class="modal" id="modal">
+  <div class="close" onclick="closeModal()">✖</div>
+  <div class="modal-content">
+    <img id="modalImg">
+    <div class="modal-body">
+      <h2 id="modalTitle"></h2>
+      <p id="modalText"></p>
+    </div>
+  </div>
+</div>
+
 <script>
-
-const titles = [
-"تطورات جديدة في الذكاء الاصطناعي",
-"إطلاق منصة AI متقدمة",
-"تحسينات في مراكز البيانات",
-"ثورة في تعلم الآلة",
-"نمو تطبيقات الذكاء الاصطناعي",
-"تقنيات جديدة في الحوسبة السحابية",
-"تحديثات في الأنظمة الذكية",
-"توسع عالمي في AI",
-"حلول مبتكرة للبيانات الضخمة",
-"تقنيات مستقبلية جديدة"
-];
-
-const sources = ["TechCrunch","Reuters","BBC","Wired","The Verge","MIT Tech"];
 
 const news = [];
 
-// توليد 120 خبر احترافي
-for (let i = 0; i < 120; i++) {
+// توليد 120 خبر
+for (let i = 1; i <= 120; i++) {
   news.push({
-    title: titles[Math.floor(Math.random()*titles.length)],
+    title: "تطورات جديدة في الذكاء الاصطناعي",
     image: `https://picsum.photos/400/200?random=${i}`,
-    source: sources[Math.floor(Math.random()*sources.length)],
-    date: "2026"
+    text: "هذا نص كامل للخبر يوضح تفاصيل أكثر عن الموضوع والتقنيات المستخدمة والتطورات الحديثة في عالم الذكاء الاصطناعي."
   });
 }
 
@@ -107,17 +141,29 @@ for (let i = 0; i < 120; i++) {
 function display() {
   const container = document.getElementById("news");
 
-  news.forEach(n => {
+  news.forEach((n, index) => {
     container.innerHTML += `
-      <div class="card">
+      <div class="card" onclick="openModal(${index})">
         <img src="${n.image}">
         <div class="content">
           <div class="title">${n.title}</div>
-          <div class="meta">${n.source} • ${n.date}</div>
         </div>
       </div>
     `;
   });
+}
+
+// فتح الخبر
+function openModal(i) {
+  document.getElementById("modal").style.display = "flex";
+  document.getElementById("modalImg").src = news[i].image;
+  document.getElementById("modalTitle").innerText = news[i].title;
+  document.getElementById("modalText").innerText = news[i].text;
+}
+
+// إغلاق
+function closeModal() {
+  document.getElementById("modal").style.display = "none";
 }
 
 display();
