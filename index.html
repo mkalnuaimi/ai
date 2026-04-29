@@ -8,6 +8,7 @@
 <style>
 body {margin:0;font-family:system-ui;background:#020617;color:white}
 header {padding:20px;text-align:center;font-size:30px;background:#020617}
+
 .container {max-width:1300px;margin:auto;padding:20px}
 
 .hero {
@@ -54,6 +55,12 @@ button {
 .title {font-size:16px}
 .meta {font-size:12px;opacity:0.6}
 
+.loading {
+  text-align:center;
+  margin-top:40px;
+  opacity:0.7;
+}
+
 .modal {
   position:fixed;top:0;left:0;width:100%;height:100%;
   background:rgba(0,0,0,0.9);
@@ -80,7 +87,7 @@ button {
 
 <div class="container">
 
-<div class="hero" id="hero"></div>
+<div id="hero" class="hero"></div>
 
 <div class="controls">
   <input type="text" id="search" placeholder="بحث...">
@@ -90,10 +97,12 @@ button {
   <button onclick="setCategory('apps')">Apps</button>
 </div>
 
+<div id="loading" class="loading">⏳ جاري تحميل الأخبار...</div>
 <div class="grid" id="news"></div>
 
 </div>
 
+<!-- Modal -->
 <div class="modal" id="modal">
   <div class="close" onclick="closeModal()">✖</div>
   <div class="modal-box">
@@ -108,29 +117,41 @@ button {
 </div>
 
 <script>
+
 const API_KEY = "e1a3805fbe9e9f5915f8a8eafb7c8d9b";
 
 let allNews = [];
 let currentCategory = "all";
 
-// Proxy
-function buildURL(page){
-  return `https://api.allorigins.win/raw?url=${encodeURIComponent(
-    `https://gnews.io/api/v4/search?q=artificial intelligence&lang=en&max=10&page=${page}&apikey=${API_KEY}`
-  )}`;
-}
+// Proxy URL
+const URL = `https://api.allorigins.win/raw?url=${encodeURIComponent(
+  `https://gnews.io/api/v4/search?q=artificial intelligence&lang=en&max=10&apikey=${API_KEY}`
+)}`;
 
-// تحميل عدة صفحات = +100 خبر
+// تحميل الأخبار
 async function loadNews(){
-  for(let i=1;i<=10;i++){
-    const res = await fetch(buildURL(i));
+  try {
+    const res = await fetch(URL);
     const data = await res.json();
-    allNews.push(...data.articles);
+
+    document.getElementById("loading").style.display = "none";
+
+    if (!data.articles || data.articles.length === 0) {
+      document.getElementById("news").innerHTML =
+        "<p style='text-align:center'>⚠️ لا توجد أخبار حالياً</p>";
+      return;
+    }
+
+    allNews = data.articles;
+    render();
+
+  } catch (e) {
+    document.getElementById("loading").innerHTML =
+      "⚠️ فشل تحميل الأخبار — تحقق من الإنترنت أو API";
   }
-  render();
 }
 
-// تصنيف
+// تصنيف بسيط
 function categorize(n){
   const t = n.title.toLowerCase();
   if(t.includes("data")) return "data";
@@ -138,7 +159,7 @@ function categorize(n){
   return "ai";
 }
 
-// عرض
+// عرض الأخبار
 function render(){
   const container = document.getElementById("news");
   container.innerHTML = "";
@@ -153,7 +174,7 @@ function render(){
   // Hero
   if(filtered[0]){
     document.getElementById("hero").innerHTML = `
-      <img src="${filtered[0].image}">
+      <img src="${filtered[0].image || 'https://via.placeholder.com/800x400'}">
       <div class="text">
         <h2>${filtered[0].title}</h2>
       </div>
@@ -163,7 +184,7 @@ function render(){
   filtered.forEach((n,i)=>{
     container.innerHTML += `
       <div class="card" onclick="openModal(${i})">
-        <img src="${n.image}">
+        <img src="${n.image || 'https://via.placeholder.com/400x200'}">
         <div class="content">
           <div class="title">${n.title}</div>
           <div class="meta">${n.source.name}</div>
@@ -183,18 +204,23 @@ function openModal(i){
   document.getElementById("mLink").onclick=()=>window.open(n.url);
 }
 
+// إغلاق
 function closeModal(){
   document.getElementById("modal").style.display="none";
 }
 
+// تصنيف
 function setCategory(c){
   currentCategory=c;
   render();
 }
 
+// بحث
 document.getElementById("search").addEventListener("input",render);
 
+// تشغيل
 loadNews();
+
 </script>
 
 </body>
