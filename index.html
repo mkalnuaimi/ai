@@ -3,93 +3,97 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEURALPULSE AI NEWS</title>
+<title>NEURALPULSE — منصة التقنية</title>
 
 <style>
 body {
-  font-family: Arial;
+  margin: 0;
+  font-family: Arial, sans-serif;
   background: #0f172a;
   color: white;
+}
+
+header {
+  padding: 20px;
   text-align: center;
+  background: #020617;
+  font-size: 24px;
+  font-weight: bold;
 }
-h1 { margin: 20px; }
-#search {
-  padding: 10px;
-  width: 60%;
-  margin-bottom: 20px;
+
+nav {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px;
 }
-#news {
+
+button {
+  padding: 10px 15px;
+  border: none;
+  cursor: pointer;
+  background: #1e293b;
+  color: white;
+  border-radius: 8px;
+}
+
+button:hover {
+  background: #38bdf8;
+}
+
+.container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px,1fr));
+  grid-template-columns: repeat(auto-fill,minmax(250px,1fr));
   gap: 20px;
   padding: 20px;
 }
+
 .card {
   background: #1e293b;
   padding: 15px;
-  border-radius: 10px;
+  border-radius: 12px;
+  transition: 0.3s;
+  text-align: center;
 }
-.card img {
-  width: 100%;
-  border-radius: 10px;
+
+.empty {
+  text-align: center;
+  opacity: 0.6;
+  margin-top: 50px;
+  font-size: 18px;
 }
-.card a {
-  color: cyan;
+
+.toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
 }
 </style>
 </head>
 
 <body>
 
-<h1>🧠 NEURALPULSE AI NEWS</h1>
-<input type="text" id="search" placeholder="ابحث عن خبر...">
+<header>🚀 NEURALPULSE</header>
 
-<div id="news"></div>
+<button class="toggle" onclick="toggleMode()">🌙 / ☀️</button>
+
+<nav>
+  <button onclick="filter('all')">الكل</button>
+  <button onclick="filter('data')">مراكز البيانات</button>
+  <button onclick="filter('systems')">الأنظمة</button>
+  <button onclick="filter('apps')">التطبيقات</button>
+</nav>
+
+<div id="empty" class="empty">لا توجد أخبار حالياً</div>
+<div class="container" id="news"></div>
 
 <script>
-const API_KEY = "e1a3805fbe9e9f5915f8a8eafb7c8d9b";
-let articles = [];
+let news = []; // فاضي
 
-async function getNews() {
-  try {
-    const url = `https://gnews.io/api/v4/search?q=artificial intelligence OR AI OR ChatGPT&lang=en&max=10&apikey=${API_KEY}`;
-    
-    const res = await fetch(url);
-    const data = await res.json();
-
-    articles = data.articles;
-    showNews(articles);
-
-  } catch (err) {
-    document.getElementById("news").innerHTML = "⚠️ خطأ في جلب الأخبار";
-  }
-}
-
-function showNews(list) {
+function display(data) {
   const container = document.getElementById("news");
+  const empty = document.getElementById("empty");
+
   container.innerHTML = "";
 
-  list.forEach(n => {
-    container.innerHTML += `
-      <div class="card">
-        <img src="${n.image || ''}">
-        <h3>${n.title}</h3>
-        <p>${n.description || ''}</p>
-        <small>${n.source.name}</small><br>
-        <a href="${n.url}" target="_blank">قراءة المزيد</a>
-      </div>
-    `;
-  });
-}
-
-document.getElementById("search").addEventListener("input", e => {
-  const val = e.target.value.toLowerCase();
-  const filtered = articles.filter(a => a.title.toLowerCase().includes(val));
-  showNews(filtered);
-});
-
-getNews();
-</script>
-
-</body>
-</html>
+ 
