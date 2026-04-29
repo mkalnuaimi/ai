@@ -6,13 +6,25 @@
 <title>NEURALPULSE PRO</title>
 
 <style>
-body {margin:0;font-family:system-ui;background:#020617;color:white}
+:root {
+  --bg:#020617;
+  --card:#0f172a;
+  --accent:#38bdf8;
+}
+
+body {
+  margin:0;
+  font-family:system-ui;
+  background:var(--bg);
+  color:white;
+}
 
 header {
   padding:20px;
   text-align:center;
-  font-size:30px;
-  background:#020617;
+  font-size:28px;
+  font-weight:bold;
+  border-bottom:1px solid #1e293b;
 }
 
 .container {
@@ -21,18 +33,20 @@ header {
   padding:20px;
 }
 
-/* Hero */
+/* HERO */
 .hero {
   border-radius:16px;
   overflow:hidden;
   margin-bottom:25px;
   position:relative;
 }
+
 .hero img {
   width:100%;
-  height:350px;
+  height:320px;
   object-fit:cover;
 }
+
 .hero .text {
   position:absolute;
   bottom:0;
@@ -41,31 +55,20 @@ header {
   width:100%;
 }
 
-/* Controls */
-.controls {
-  display:flex;
-  gap:10px;
+/* SEARCH */
+.search {
   margin-bottom:20px;
-  flex-wrap:wrap;
 }
 
-input {
-  padding:10px;
-  border-radius:8px;
+.search input {
+  width:100%;
+  padding:12px;
+  border-radius:10px;
   border:none;
-  width:220px;
+  font-size:15px;
 }
 
-button {
-  padding:10px 15px;
-  border:none;
-  border-radius:8px;
-  background:#1e293b;
-  color:white;
-  cursor:pointer;
-}
-
-/* Grid */
+/* GRID */
 .grid {
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
@@ -73,13 +76,16 @@ button {
 }
 
 .card {
-  background:#1e293b;
+  background:var(--card);
   border-radius:14px;
   overflow:hidden;
   cursor:pointer;
   transition:0.3s;
 }
-.card:hover {transform:translateY(-5px)}
+
+.card:hover {
+  transform:translateY(-6px);
+}
 
 .card img {
   width:100%;
@@ -87,16 +93,27 @@ button {
   object-fit:cover;
 }
 
-.content {padding:12px}
-.title {font-size:15px;margin-bottom:8px}
-.meta {font-size:12px;opacity:0.6}
+.content {
+  padding:12px;
+}
 
+.title {
+  font-size:15px;
+  margin-bottom:8px;
+}
+
+.meta {
+  font-size:12px;
+  opacity:0.6;
+}
+
+/* LOADING */
 .loading {
   text-align:center;
   margin-top:40px;
 }
 
-/* Modal */
+/* MODAL */
 .modal {
   position:fixed;
   top:0;left:0;
@@ -110,7 +127,7 @@ button {
 .modal-box {
   width:90%;
   max-width:800px;
-  background:#020617;
+  background:var(--bg);
   border-radius:14px;
   overflow:hidden;
 }
@@ -121,7 +138,17 @@ button {
   object-fit:cover;
 }
 
-.modal-body {padding:20px}
+.modal-body {
+  padding:20px;
+}
+
+.btn {
+  background:var(--accent);
+  padding:10px 15px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+}
 
 .close {
   position:absolute;
@@ -141,8 +168,8 @@ button {
 
 <div id="hero" class="hero"></div>
 
-<div class="controls">
-  <input type="text" id="search" placeholder="🔍 بحث...">
+<div class="search">
+  <input id="search" placeholder="🔍 ابحث عن خبر...">
 </div>
 
 <div id="loading" class="loading">⏳ جاري تحميل الأخبار...</div>
@@ -151,7 +178,7 @@ button {
 
 </div>
 
-<!-- Modal -->
+<!-- MODAL -->
 <div class="modal" id="modal">
   <div class="close" onclick="closeModal()">✖</div>
   <div class="modal-box">
@@ -160,71 +187,72 @@ button {
       <h2 id="mTitle"></h2>
       <p id="mDesc"></p>
       <br>
-      <button id="mLink">🔗 قراءة المصدر</button>
+      <button class="btn" id="mLink">قراءة الخبر</button>
     </div>
   </div>
 </div>
 
 <script>
 
-// 🔥 مصادر RSS
+// مصادر RSS
 const feeds = [
 "https://news.google.com/rss/search?q=artificial+intelligence",
-"https://feeds.bbci.co.uk/news/technology/rss.xml",
-"https://www.reutersagency.com/feed/?best-topics=technology"
+"https://feeds.bbci.co.uk/news/technology/rss.xml"
 ];
 
 // تحويل RSS
-function rssToJson(url){
+function rss(url){
   return `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`;
 }
 
 let allNews = [];
 
-async function loadNews(){
-  try{
-    for (let f of feeds){
-      const res = await fetch(rssToJson(f));
+async function load(){
+  try {
+    for(let f of feeds){
+      const res = await fetch(rss(f));
       const data = await res.json();
-
-      if(data.items){
-        allNews.push(...data.items);
-      }
+      if(data.items) allNews.push(...data.items);
     }
 
     document.getElementById("loading").style.display="none";
 
+    if(allNews.length === 0){
+      document.getElementById("news").innerHTML="⚠️ لا توجد أخبار";
+      return;
+    }
+
     render();
 
   } catch(e){
-    document.getElementById("loading").innerHTML="⚠️ فشل تحميل الأخبار";
+    document.getElementById("loading").innerHTML="⚠️ فشل التحميل";
   }
 }
 
 // عرض
 function render(){
   const container = document.getElementById("news");
-  container.innerHTML = "";
+  container.innerHTML="";
 
   let filtered = allNews;
 
-  const search = document.getElementById("search").value.toLowerCase();
-  filtered = filtered.filter(n => n.title.toLowerCase().includes(search));
+  const q = document.getElementById("search").value.toLowerCase();
+  filtered = filtered.filter(n=>n.title.toLowerCase().includes(q));
 
-  // Hero
+  // HERO
   if(filtered[0]){
     document.getElementById("hero").innerHTML = `
-      <img src="https://picsum.photos/800/400?random=1">
+      <img src="${filtered[0].thumbnail || 'https://picsum.photos/800/400'}">
       <div class="text">
         <h2>${filtered[0].title}</h2>
       </div>
     `;
   }
 
-  filtered.slice(0,120).forEach((n,i)=>{
+  filtered.slice(0,100).forEach((n,i)=>{
     container.innerHTML += `
       <div class="card" onclick="openModal(${i})">
-        <img src="https://picsum.photos/400/200?random=${i}">
+        <img loading="lazy" src="${n.thumbnail || 'https://picsum.photos/400/200'}">
         <div class="content">
           <div class="title">${n.title}</div>
           <div class="meta">${n.pubDate}</div>
@@ -238,9 +266,9 @@ function render(){
 function openModal(i){
   const n = allNews[i];
   document.getElementById("modal").style.display="flex";
-  document.getElementById("mImg").src=`https://picsum.photos/800/400?random=${i}`;
+  document.getElementById("mImg").src=n.thumbnail || '';
   document.getElementById("mTitle").innerText=n.title;
-  document.getElementById("mDesc").innerText="اضغط قراءة المصدر لعرض الخبر الكامل من الموقع الرسمي.";
+  document.getElementById("mDesc").innerText="اضغط لقراءة الخبر الكامل من المصدر الرسمي.";
   document.getElementById("mLink").onclick=()=>window.open(n.link);
 }
 
@@ -249,10 +277,9 @@ function closeModal(){
   document.getElementById("modal").style.display="none";
 }
 
-// بحث
 document.getElementById("search").addEventListener("input",render);
 
-loadNews();
+load();
 
 </script>
 
